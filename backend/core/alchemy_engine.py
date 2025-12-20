@@ -809,6 +809,7 @@ async def call_ai_with_fallback(
     """Calls AI API with fallback strategy for reliability."""
     models_to_try = [primary_model] + ModelConfig.FALLBACK_MODELS
     
+    last_error = ""
     for attempt, model in enumerate(models_to_try):
         try:
             logger.info(f"Attempting API call with model: {model} (attempt {attempt + 1})")
@@ -816,15 +817,13 @@ async def call_ai_with_fallback(
             return response, None
             
         except Exception as e:
-            error_msg = str(e)
-            logger.warning(f"Model {model} failed: {error_msg}")
+            last_error = str(e)
+            logger.warning(f"Model {model} failed: {last_error}")
             
-            if "429" in error_msg: return "", "rate_limit"
+            if "429" in last_error: return "", "rate_limit"
             if attempt < len(models_to_try) - 1: continue
             
-            return "", "All models exhausted"
-    
-    return "", "All models exhausted"
+    return "", f"Generation failed: {last_error}"
 
 
 def format_response(raw_response: str) -> Tuple[str, str]:
