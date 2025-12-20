@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, Target, BookOpen, Lightbulb, ArrowRight, ArrowLeft, CheckCircle2, SkipForward } from "lucide-react";
+import { Sparkles, Target, BookOpen, Lightbulb, ArrowRight, ArrowLeft, CheckCircle2, SkipForward, ChevronLeft, ChevronRight } from "lucide-react";
 import PromptAnatomy from "@/components/PromptAnatomy";
 import ExampleButton from "@/components/ExampleButton";
 import TooltipModal from "@/components/TooltipModal";
@@ -327,34 +327,45 @@ const Wizard = () => {
                 </CardContent>
               </Card>
 
-              disabled={!isStepValid()}
-              size="lg"
-              className="flex-1 font-semibold"
-              aria-label={currentStep === totalSteps ? t('wizard.buttons.generate') : t('wizard.buttons.continue')}
-                >
-              {currentStep === totalSteps ? (
-                <>
-                  <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
-                  {t('wizard.buttons.generate')}
-                </>
-              ) : (
-                <>
-                  {t('wizard.buttons.continue')}
-                  <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
-                </>
-              )}
-            </Button>
+              {/* Navigation Buttons */}
+              <div className="flex items-center justify-between gap-2 sm:gap-4 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border/50">
+                {currentStep > 1 ? (
+                  <Button variant="ghost" onClick={handleBack} className="pl-0 hover:bg-transparent hover:text-primary transition-colors">
+                    <ChevronLeft className="w-4 h-4 mr-1 sm:mr-2" />
+                    <span className="text-sm sm:text-base">{t('wizard.buttons.back')}</span>
+                  </Button>
+                ) : (
+                  <div /> /* Spacer if no back button */
+                )}
+
+                <div className="flex items-center gap-2 sm:gap-3">
+                  {isOptionalStep && !promptData[currentStepData.field as keyof PromptData] && (
+                    <Button variant="ghost" onClick={handleSkip} className="text-muted-foreground hover:text-primary text-sm sm:text-base px-2 sm:px-4">
+                      <SkipForward className="w-4 h-4 mr-1 sm:mr-2" />
+                      <span className="sm:hidden">Skip</span>
+                      <span className="hidden sm:inline">{t('wizard.buttons.skip')}</span>
+                    </Button>
+                  )}
+                  <Button onClick={handleNext} disabled={!isStepValid()} className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-xl px-4 sm:px-8 py-2 sm:py-6 text-sm sm:text-lg font-medium transition-all hover:scale-105 active:scale-95">
+                    <span className="mr-1 sm:mr-2">{currentStep === totalSteps ? t('wizard.buttons.generate') : t('wizard.buttons.continue')}</span>
+                    {currentStep === totalSteps ? (
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="hidden lg:block lg:sticky lg:top-8 h-fit">
+              <PromptAnatomy promptData={promptData} currentStep={currentStep} />
+            </div>
           </div>
         </div>
-
-        {/* Sidebar */}
-        <div className="hidden lg:block lg:sticky lg:top-8 h-fit">
-          <PromptAnatomy promptData={promptData} currentStep={currentStep} />
-        </div>
       </div>
-    </div >
-      </div >
-  <Footer />
+      <Footer />
     </>
   );
 };
