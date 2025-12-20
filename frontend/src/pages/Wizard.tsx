@@ -206,40 +206,40 @@ const Wizard = () => {
   return (
     <>
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6 sm:py-10">
-          <div className="grid lg:grid-cols-1 xl:grid-cols-[1fr,400px] gap-8 max-w-7xl mx-auto">
+        <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-10">
+          <div className="grid lg:grid-cols-1 xl:grid-cols-[1fr,400px] gap-4 sm:gap-8 max-w-7xl mx-auto">
             {/* Main Form */}
-            <div className="space-y-6 sm:space-y-8" role="form" aria-label={t('wizard.progress')}>
+            <div className="space-y-4 sm:space-y-8" role="form" aria-label={t('wizard.progress')}>
               {/* Progress */}
-              <div className="space-y-3 px-1 sm:px-0">
+              <div className="space-y-2 px-1 sm:px-0">
                 <div className="flex justify-between items-end">
                   <div className="space-y-1">
-                    <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">{t('wizard.progress')}</span>
-                    <div className="flex items-center gap-2 text-primary font-bold text-lg sm:text-xl">
-                      <Sparkles className="w-5 h-5" />
+                    <span className="text-[10px] sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">{t('wizard.progress')}</span>
+                    <div className="flex items-center gap-2 text-primary font-bold text-base sm:text-xl">
+                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span aria-live="polite">{Math.round(progress)}% {t('wizard.done')}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" />
+                  <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground font-medium">
+                    <CheckCircle2 className="w-3 h-3 sm:w-4 sm:h-4 text-primary" aria-hidden="true" />
                     {t('wizard.stepOf', { current: currentStep, total: totalSteps })}
                   </div>
                 </div>
-                <Progress value={progress} className="h-3 sm:h-4 bg-muted rounded-full overflow-hidden shadow-inner" aria-label={`Progress: ${Math.round(progress)}%`} />
+                <Progress value={progress} className="h-2 sm:h-3 sm:h-4 bg-muted rounded-full overflow-hidden shadow-inner" aria-label={`Progress: ${Math.round(progress)}%`} />
               </div>
 
               {/* Question Card */}
-              <Card className="border-2 shadow-elevated overflow-hidden rounded-2xl sm:rounded-3xl">
-                <CardContent className="p-4 sm:p-8 md:p-10">
-                  <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6 sm:mb-8">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 animate-scale-in shadow-lg border border-primary/10" aria-hidden="true">
-                      <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+              <Card className="border-2 shadow-elevated overflow-hidden rounded-xl sm:rounded-3xl">
+                <CardContent className="p-3 sm:p-8 md:p-10">
+                  <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-6 mb-4 sm:mb-8">
+                    <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 animate-scale-in shadow-lg border border-primary/10" aria-hidden="true">
+                      <Icon className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
                     </div>
-                    <div className="flex-1 space-y-2">
-                      <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">
+                    <div className="flex-1 space-y-1 sm:space-y-2">
+                      <h2 className="text-lg sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
                         {currentStepData.title}
                       </h2>
-                      <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                      <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed">
                         {currentStepData.subtitle}{" "}
                         {currentStepData.learnMore && (
                           <TooltipModal
@@ -261,7 +261,7 @@ const Wizard = () => {
                           placeholder={currentStepData.placeholder}
                           value={promptData[currentStepData.field as keyof PromptData]}
                           onChange={(e) => updateField(e.target.value)}
-                          className="min-h-[140px] text-base resize-none border-2 focus:border-primary pr-20"
+                          className="min-h-[100px] sm:min-h-[140px] text-sm sm:text-base resize-none border-2 focus:border-primary pr-12 sm:pr-20"
                           autoFocus
                           aria-label={currentStepData.title}
                           aria-describedby={`step-${currentStep}-hint`}
