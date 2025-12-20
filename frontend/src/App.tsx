@@ -16,12 +16,15 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+import GoogleAnalytics from "./components/GoogleAnalytics";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <GoogleAnalytics />
         <Navigation />
         <Routes>
           <Route path="/" element={<Index />} />
