@@ -1,0 +1,214 @@
+{
+  "nav": {
+    "home": "What to Prompt",
+    "help": "Help",
+    "templates": "Templates",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Stop Guessing.",
+    "titleHighlight": "Start Getting Results",
+    "titleEnd": "From AI",
+    "subtitle": "Get professional-grade prompts while learning prompt engineering",
+    "cta": "Start Building My Prompt"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Three simple steps to better AI results",
+    "step1": {
+      "title": "Interactive Wizard",
+      "description": "Answer 5 simple questions in 2 minutes",
+      "outcome": "Get professional-grade prompts while learning prompt engineering"
+    },
+    "step2": {
+      "title": "Learn as You Build",
+      "description": "See your prompt structure in real-time",
+      "outcome": "Understand what makes prompts work so you can improve them yourself"
+    },
+    "step3": {
+      "title": "Instant Results",
+      "description": "Copy and paste directly into any AI tool",
+      "outcome": "Start getting better AI responses in seconds, not hours"
+    }
+  },
+  "examples": {
+    "title": "See The Difference",
+    "subtitle": "Transform vague requests into precise, results-driven prompts",
+    "example1": {
+      "before": "Write a blog post about productivity",
+      "after": "As an experienced content strategist, write a 1,200-word blog post about productivity hacks for remote workers. Target audience: tech professionals aged 25-40. Tone: Professional yet approachable. Include 5 actionable tips with real examples."
+    },
+    "example2": {
+      "before": "Help me with marketing",
+      "after": "As a senior marketing consultant, create a 3-email welcome sequence for new subscribers to a meditation app. Audience: stressed professionals seeking work-life balance. Tone: Calm and empathetic. Each email should be 150-200 words with a clear CTA."
+    },
+    "example3": {
+      "before": "Make a social media post",
+      "after": "As a social media expert, create 5 Instagram captions for a sustainable fashion brand launching eco-friendly sneakers. Target: environmentally conscious millennials. Tone: Inspiring and authentic. Include relevant hashtags and emojis."
+    },
+    "example4": {
+      "before": "Explain this concept",
+      "after": "As a patient educator, explain quantum computing to a 12-year-old with no technical background. Use simple analogies from everyday life. Keep it under 300 words. Make it engaging and avoid jargon completely."
+    },
+    "example5": {
+      "before": "Create a sales email",
+      "after": "As a B2B sales expert, write a cold outreach email to CTOs of mid-sized tech companies introducing our cybersecurity solution. Tone: Professional and value-focused. Length: 150 words max. Include a clear meeting request CTA."
+    }
+  },
+  "wizard": {
+    "progress": "Building your prompt...",
+    "done": "done",
+    "stepOf": "Step {{current}} of {{total}}",
+    "step1": {
+      "title": "What are you trying to achieve?",
+      "subtitle": "Be specific about your goal. The clearer you are, the better the result.",
+      "placeholder": "e.g., Write a blog post about sustainable living",
+      "learnMoreTitle": "Why does this matter?",
+      "learnMoreDesc": "This is your main goal or objective. Think of it as the 'what' you want the AI to create or help you with. Be clear and specific — vague requests lead to vague results.",
+      "examples": [
+        "Write a product description for eco-friendly water bottles",
+        "Create a marketing email for a new app launch",
+        "Generate ideas for social media posts about productivity"
+      ]
+    },
+    "step2": {
+      "title": "Who's your audience?",
+      "subtitle": "This helps the AI understand who you're writing for and tailor the response.",
+      "placeholder": "e.g., Tech-savvy millennials interested in sustainability",
+      "learnMoreTitle": "How does context help?",
+      "learnMoreDesc": "Context provides background information that shapes the AI's understanding. This includes your audience, situation, constraints, or any relevant details. The more context you provide, the more tailored and useful the response will be.",
+      "examples": [
+        "Small business owners looking to grow their online presence",
+        "Students learning programming for the first time",
+        "Busy parents seeking meal planning tips"
+      ]
+    },
+    "step3": {
+      "title": "Which AI are you using?",
+      "subtitle": "Different AIs have different strengths. This helps tailor your prompt.",
+      "selectPlaceholder": "Select your AI model",
+      "learnMoreTitle": "Which AI should I choose?",
+      "learnMoreDesc": "Different AI models have unique strengths and formatting preferences. ChatGPT excels at creative and conversational tasks. Claude is great for detailed analysis. Gemini handles multimodal tasks well."
+    },
+    "step4": {
+      "title": "What tone should the output have?",
+      "subtitle": "Tone shapes how your AI responds. Choose what fits your audience. (Optional - you can skip this)",
+      "placeholder": "e.g., Professional, friendly, technical",
+      "learnMoreTitle": "How does tone affect results?",
+      "learnMoreDesc": "Tone determines the personality and style of the AI's response. It affects word choice, sentence structure, and overall feel. Match the tone to your audience and purpose for maximum impact.",
+      "examples": [
+        "Professional and data-driven",
+        "Casual and conversational",
+        "Inspiring and motivational"
+      ]
+    },
+    "step5": {
+      "title": "Any special rules or requirements?",
+      "subtitle": "Special instructions help shape precision. Add formatting needs or content limits.",
+      "placeholder": "e.g., Keep it under 500 words, use bullet points, include 3 examples",
+      "learnMoreTitle": "When do I need special rules?",
+      "learnMoreDesc": "Requirements and constraints define the boundaries and format of the output. This includes word limits, structural preferences (bullet points, headings), must-have elements, or things to avoid.",
+      "examples": [
+        "Keep under 500 words, use bullet points",
+        "Include 3 specific examples",
+        "Use simple language, avoid jargon"
+      ]
+    },
+    "step6": {
+      "title": "What role should the AI play?",
+      "subtitle": "This tells the AI how to act and what perspective to use.",
+      "placeholder": "e.g., Expert marketer, helpful teacher, creative writer",
+      "learnMoreTitle": "What role should I pick?",
+      "learnMoreDesc": "Assigning a role gives the AI a persona and expertise level to embody. This shapes its perspective, knowledge base, and approach.",
+      "examples": [
+        "Senior marketing consultant with 10 years experience",
+        "Patient educator who explains complex topics simply",
+        "Creative copywriter specializing in emotional storytelling"
+      ]
+    },
+    "buttons": {
+      "back": "Back",
+      "continue": "Continue",
+      "skip": "Skip this step",
+      "generate": "Generate My Prompt",
+      "inspiration": "Need inspiration? Try one of these:"
+    },
+    "modal": {
+      "continueButton": "Continue"
+    }
+  },
+  "result": {
+    "celebration": "Success! Your prompt is ready to use",
+    "title": "Your Perfect Prompt is Ready! 🎉",
+    "subtitle": "Copy this and paste it into {{aiModel}} for incredible results",
+    "copyButton": "Copy My Expert Prompt",
+    "copiedButton": "✓ Copied!",
+    "openButton": "Open in {{aiModel}}",
+    "refineButton": "Refine Prompt",
+    "explainButton": "Explain Prompt",
+    "hideButton": "Hide Prompt",
+    "explanationTitle": "Understanding Your Prompt",
+    "explanationRole": "Role: Sets the AI's perspective and expertise level, helping it understand what lens to use.",
+    "explanationContext": "Context: Provides background information so the AI understands your situation and audience.",
+    "explanationTask": "Task: Clearly defines what you want the AI to create or help with.",
+    "explanationRequirements": "Requirements: Specifies formatting, length, and any constraints the output must follow.",
+    "explanationTone": "Tone: Determines the style and voice of the response to match your needs.",
+    "tipsTitle": "Pro Tips for Best Results",
+    "tip1": "Paste the entire prompt — don't skip any sections",
+    "tip2": "If you don't like the first response, click 'regenerate' in your AI tool",
+    "tip3": "Save this prompt for reuse — you can tweak small details each time"
+  },
+  "promptAnatomy": {
+    "title": "Your Prompt Preview",
+    "role": "Role",
+    "roleDesc": "Who the AI should be",
+    "task": "Task",
+    "taskDesc": "What you want done",
+    "context": "Context",
+    "contextDesc": "Background information",
+    "specialInstructions": "Special Instructions",
+    "specialInstructionsDesc": "Rules and requirements",
+    "proTips": "Pro Tips",
+    "tip1": "Use special instructions to shape precision",
+    "tip2": "Be specific about tone and style",
+    "tip3": "Examples help AI understand patterns",
+    "tip4": "Iterate on prompts for better results"
+  },
+  "contact": {
+    "title": "Let's",
+    "titleHighlight": "Connect",
+    "subtitle": "Have questions, feedback, or just want to say hi? We'd love to hear from you.",
+    "emailCard": {
+      "title": "Email Us",
+      "description": "Send us an email anytime. We typically respond within 24 hours.",
+      "cta": "contact@allensamuel.me"
+    },
+    "feedbackCard": {
+      "title": "Share Feedback",
+      "description": "Your feedback helps us improve. Let us know what you think!",
+      "cta": "Send Feedback"
+    },
+    "socialCard": {
+      "title": "Follow Us",
+      "description": "Stay connected and get the latest updates on social media."
+    },
+    "moreInfo": {
+      "title": "Looking for More?",
+      "description": "Check out our creator's website for more projects and resources.",
+      "cta": "Visit allensamuel.me"
+    }
+  },
+  "help": {
+    "title": "Help Center",
+    "subtitle": "Everything you need to master prompt engineering"
+  },
+  "templates": {
+    "title": "Templates",
+    "subtitle": "Pre-built prompt templates to get you started faster",
+    "comingSoon": "Coming Soon",
+    "comingSoonDesc": "We're working on creating useful prompt templates for various use cases. Check back soon!"
+  },
+  "footer": {
+    "copyright": "Created by"
+  }
+}

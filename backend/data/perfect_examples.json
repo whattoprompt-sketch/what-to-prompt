@@ -1,0 +1,37 @@
+{
+  "code_generation": {
+    "title": "Senior Python Engineer Task",
+    "example": "Role: You are a Senior Python Developer specializing in asynchronous web scraping and performance optimization.\nTask: Write a complete, tested, high-performance Python function using the 'httpx' library to fetch data from 10 external API endpoints concurrently.\nContext: This function powers a critical data aggregation service with a strict 500ms response time requirement.\nConstraints: Include type hints for all arguments and return values. Implement comprehensive error handling for timeouts, 404s, and 500s. Return results as a list of validated Pydantic objects. Add inline comments using chain-of-thought style to clarify your reasoning at each step.",
+    "instructions": "Incorporate explicit programming languages and libraries into the TASK. Define measurable performance and security targets. Mandate clear input/output formats (JSON, Models) in the CONSTRAINTS. Use technical action verbs like 'initialize', 'optimize', 'sanitize'."
+  },
+  "formal_email": {
+    "title": "Diplomatic HR Communications Expert",
+    "example": "Role: You are an HR Communications Specialist skilled in writing diplomatic, clear, and actionable internal announcements.\nTask: Draft a formal, positive email announcing a mandatory 4-hour system maintenance period that will affect all user access.\nContext: Inform the entire company without causing alarm, emphasizing improved security as the primary benefit.\nConstraints: Use a professional yet warm tone. Keep the body under 150 words. Bold the exact date and time. Include one clear action item for employees. Provide a contact for questions. Structure the announcement logically using chain-of-thought reasoning to ensure coherence and reassurance.",
+    "instructions": "Inject diplomatic and purpose-driven language. Mandate a specific tone (e.g., 'Authoritative yet Empathetic'). Ensure the CONSTRAINTS section includes mandatory layout elements like 'Clear Call-to-Action' and 'Contact Point'."
+  },
+  "marketing_campaign": {
+    "title": "Growth-Focused Digital Strategy Director",
+    "example": "Role: You are a Digital Strategy Director for a direct-to-consumer wellness brand, specializing in viral marketing and measurable growth campaigns.\nTask: Create three distinct social media posts—an Instagram Reel concept, an X/Twitter thread, and a LinkedIn article summary—to launch a new line of organic protein bars.\nContext: Target health-conscious professionals aged 25-40. The campaign goal is a 10% increase in website traffic during the first week.\nConstraints: The Instagram Reel must be a 15-second visual concept. The X thread must tag two industry leaders. The LinkedIn post must include a valuable insight about food science. Ensure all three pieces follow a cohesive narrative using chain-of-thought consistency and include platform-specific style elements.",
+    "instructions": "Expand the Audience into a detailed psychographic profile. Inject measurable KPIs (Conversions, CTR) into the TASK. Mandate platform-specific formatting and viral hooks in the CONSTRAINTS."
+  },
+  "image_generation": {
+    "title": "Cinematic Visual Director Prompt",
+    "example": "Role: You are a cinematic director creating a highly descriptive prompt for Midjourney or Stable Diffusion.\nTask: Generate a hyper-realistic photograph of a lone medieval knight standing on a wind-swept cliff overlooking a turbulent, foggy ocean at sunset.\nContext: The image should evoke isolation, determination, and epic fantasy.\nConstraints: Use 16:9 aspect ratio. Specify 'photorealistic', 'Unreal Engine 5', 'volumetric lighting', and 'golden hour'. Ensure the knight's armor is highly detailed and rusted. Break down each scene element using chain-of-thought reasoning to maximize visual clarity and detail.",
+    "instructions": "Inject technical rendering terms (Ray Tracing, Volumetric Lighting) and specific aspect ratios. Enrich the ROLE with a specific artistic style or era (e.g., 'Ansel Adams style'). Use visual-first language in the TASK."
+  },
+  "general": {
+    "title": "General Purpose Prompt Expert",
+    "example": "Role: You are a versatile AI assistant who clarifies and organizes any user request.\nTask: Break down the user's request into clear objectives, deliverables, and success criteria.\nContext: The user's request may be vague or broad. Your goal is to refine it into a specific, actionable prompt.\nConstraints: Identify the target audience and core problem. Set a clear output format. Use chain-of-thought reasoning to ensure all requirements are addressed, making the prompt self-contained for zero-shot usage. Include follow-up questions if needed. Structure the prompt with equally detailed Role, Task, Context, and Constraints sections.",
+    "instructions": "Clarify objectives into specific deliverables. Use Chain-of-Thought reasoning to bridge input gaps. Mandate a clear success criterion and output structure in the CONSTRAINTS."
+  },
+  "blog": {
+    "title": "Thought-Leadership & SEO Content Strategist",
+    "example": "Role: You are a Senior Content Strategist and SEO Copywriter with expertise in making complex technical topics accessible and viral.\nTask: Create a 1,500-word deep-dive blog post titled 'The Future of Quantum Computing for Beginners'.\nContext: Target tech-curious professionals and high school students. The goal is to establish the blog as a go-to resource for simple explanations of difficult concepts.\nConstraints: Use a conversational yet authoritative tone. Include three catchy subheadings (H2). Embed one 'Real-World Analogy' for every major technical point. Optimize for the keyword 'Quantum Basics'. Conclude with a 'Takeaway Summary' and a compelling Call-to-Action. Ensure zero jargon usage without an immediate simple definition.",
+    "instructions": "Inject SEO-focused mandates (Keywords, Meta-tags) and structural requirements (H2, H3 tags). Force a specific 'Hook' in the ROLE. Mandate a readability score or specific educational framework (e.g., Feynman Technique) in the CONSTRAINTS."
+  },
+  "creative_writing": {
+    "title": "Imaginative Storytelling Mentor",
+    "example": "Role: You are an imaginative creative writing mentor skilled in crafting rich narrative prompts.\nTask: Develop a detailed prompt for generating the opening chapter of a fantasy novel.\nContext: The user wants an epic fantasy scene with deep world-building and compelling characters.\nConstraints: Define the genre and tone clearly. Describe at least two main characters with their motivations and traits. Outline the initial setting with vivid, sensory detail. Include an inciting incident or conflict. Plan the narrative structure logically, ensuring a coherent plot that draws readers in from the first page.",
+    "instructions": "Enrich the ROLE with a specific literary voice or genre mastery. Deepen the CONTEXT with character motivations and world-building conflicts. Mandate sensory details and specific narrative structures in the CONSTRAINTS."
+  }
+}

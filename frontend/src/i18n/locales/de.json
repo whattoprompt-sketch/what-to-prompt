@@ -1,0 +1,217 @@
+{
+  "nav": {
+    "home": "Was zu prompten",
+    "help": "Hilfe",
+    "templates": "Vorlagen",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Hören Sie auf zu raten.",
+    "titleHighlight": "Beginnen Sie Ergebnisse zu erzielen",
+    "titleEnd": "mit KI",
+    "subtitle": "Erhalten Sie professionelle Prompts und lernen Sie gleichzeitig Prompt Engineering",
+    "cta": "Meinen Prompt erstellen"
+  },
+  "howItWorks": {
+    "title": "So funktioniert es",
+    "subtitle": "Drei einfache Schritte zu besseren KI-Ergebnissen",
+    "step1": {
+      "title": "Interaktiver Assistent",
+      "description": "Beantworten Sie 5 einfache Fragen in 2 Minuten",
+      "outcome": "Erhalten Sie professionelle Prompts während Sie Prompt Engineering lernen"
+    },
+    "step2": {
+      "title": "Lernen beim Erstellen",
+      "description": "Sehen Sie Ihre Prompt-Struktur in Echtzeit",
+      "outcome": "Verstehen Sie, was Prompts erfolgreich macht"
+    },
+    "step3": {
+      "title": "Sofortige Ergebnisse",
+      "description": "Kopieren und direkt in jedes KI-Tool einfügen",
+      "outcome": "Bessere KI-Antworten in Sekunden, nicht Stunden"
+    }
+  },
+  "examples": {
+    "title": "Sehen Sie den Unterschied",
+    "subtitle": "Verwandeln Sie vage Anfragen in präzise, ergebnisorientierte Prompts",
+    "example1": {
+      "before": "Schreibe einen Blogbeitrag über Produktivität",
+      "after": "Als erfahrener Content-Stratege, schreibe einen 1.200-Wörter-Blogbeitrag über Produktivitätstipps für Remote-Arbeiter. Zielgruppe: Tech-Profis 25-40 Jahre. Ton: Professionell aber zugänglich. Füge 5 umsetzbare Tipps mit echten Beispielen hinzu."
+    },
+    "example2": {
+      "before": "Hilf mir beim Marketing",
+      "after": "Als Senior Marketing-Berater, erstelle eine 3-E-Mail-Willkommenssequenz für neue Abonnenten einer Meditations-App. Zielgruppe: Gestresste Berufstätige. Ton: Ruhig und einfühlsam. Jede E-Mail sollte 150-200 Wörter mit klarem CTA haben."
+    },
+    "example3": {
+      "before": "Erstelle einen Social-Media-Post",
+      "after": "Als Social-Media-Experte, erstelle 5 Instagram-Captions für eine nachhaltige Modemarke. Zielgruppe: Umweltbewusste Millennials. Ton: Inspirierend und authentisch. Füge relevante Hashtags und Emojis hinzu."
+    },
+    "example4": {
+      "before": "Erkläre dieses Konzept",
+      "after": "Als geduldiger Pädagoge, erkläre Quantencomputing einem 12-Jährigen ohne technischen Hintergrund. Verwende einfache Analogien aus dem Alltag. Halte es unter 300 Wörtern. Mache es spannend und vermeide Fachjargon."
+    },
+    "example5": {
+      "before": "Erstelle eine Verkaufs-E-Mail",
+      "after": "Als B2B-Verkaufsexperte, schreibe eine Kalt-Akquise-E-Mail an CTOs von mittelständischen Tech-Unternehmen. Ton: Professionell und wertorientiert. Länge: Max. 150 Wörter. Füge einen klaren Meeting-Request-CTA hinzu."
+    }
+  },
+  "wizard": {
+    "progress": "Erstelle deinen Prompt...",
+    "done": "fertig",
+    "stepOf": "Schritt {{current}} von {{total}}",
+    "step1": {
+      "title": "Was möchtest du erreichen?",
+      "subtitle": "Sei spezifisch über dein Ziel. Je klarer du bist, desto besser das Ergebnis.",
+      "placeholder": "z.B. Schreibe einen Blogbeitrag über nachhaltiges Leben",
+      "learnMoreTitle": "Warum ist das wichtig?",
+      "learnMoreDesc": "Dies ist dein Hauptziel. Denke daran als das 'Was' du von der KI erstellen lassen möchtest. Sei klar und spezifisch — vage Anfragen führen zu vagen Ergebnissen.",
+      "examples": [
+        "Schreibe eine Produktbeschreibung für umweltfreundliche Wasserflaschen",
+        "Erstelle eine Marketing-E-Mail für einen neuen App-Launch",
+        "Generiere Ideen für Social-Media-Posts über Produktivität"
+      ]
+    },
+    "step2": {
+      "title": "Wer ist dein Publikum?",
+      "subtitle": "Das hilft der KI zu verstehen, für wen du schreibst und die Antwort anzupassen.",
+      "placeholder": "z.B. Technikaffine Millennials interessiert an Nachhaltigkeit",
+      "learnMoreTitle": "Wie hilft Kontext?",
+      "learnMoreDesc": "Kontext liefert Hintergrundinformationen, die das Verständnis der KI prägen. Je mehr Kontext du gibst, desto maßgeschneiderter und nützlicher wird die Antwort.",
+      "examples": [
+        "Kleinunternehmer, die ihre Online-Präsenz ausbauen möchten",
+        "Studenten, die zum ersten Mal Programmieren lernen",
+        "Vielbeschäftigte Eltern, die Tipps zur Mahlzeitenplanung suchen"
+      ]
+    },
+    "step3": {
+      "title": "Welche KI verwendest du?",
+      "subtitle": "Verschiedene KIs haben unterschiedliche Stärken. Dies hilft, deinen Prompt anzupassen.",
+      "selectPlaceholder": "Wähle dein KI-Modell",
+      "learnMoreTitle": "Welche KI sollte ich wählen?",
+      "learnMoreDesc": "Verschiedene KI-Modelle haben einzigartige Stärken. ChatGPT ist hervorragend für kreative Aufgaben. Claude ist großartig für detaillierte Analysen. Gemini ist stark bei multimodalen Aufgaben."
+    },
+    "step4": {
+      "title": "Welchen Ton soll die Ausgabe haben?",
+      "subtitle": "Der Ton bestimmt, wie die KI antwortet. Wähle, was zu deinem Publikum passt. (Optional - kann übersprungen werden)",
+      "placeholder": "z.B. Professionell, freundlich, technisch",
+      "learnMoreTitle": "Wie beeinflusst der Ton Ergebnisse?",
+      "learnMoreDesc": "Der Ton bestimmt die Persönlichkeit und den Stil der KI-Antwort. Er beeinflusst Wortwahl, Satzstruktur und Gesamtgefühl.",
+      "examples": [
+        "Professionell und datengetrieben",
+        "Locker und gesprächig",
+        "Inspirierend und motivierend"
+      ]
+    },
+    "step5": {
+      "title": "Irgendwelche speziellen Regeln oder Anforderungen?",
+      "subtitle": "Spezielle Anweisungen helfen bei der Präzision. Füge Formatierungswünsche oder Inhaltsgrenzen hinzu.",
+      "placeholder": "z.B. Unter 500 Wörter, Aufzählungspunkte verwenden, 3 Beispiele einschließen",
+      "learnMoreTitle": "Wann brauche ich spezielle Regeln?",
+      "learnMoreDesc": "Anforderungen und Einschränkungen definieren die Grenzen und das Format der Ausgabe. Dies umfasst Wortlimits, strukturelle Präferenzen und Dinge, die vermieden werden sollen.",
+      "examples": [
+        "Unter 500 Wörter, Aufzählungspunkte verwenden",
+        "3 spezifische Beispiele einschließen",
+        "Einfache Sprache verwenden, Fachjargon vermeiden"
+      ]
+    },
+    "step6": {
+      "title": "Welche Rolle soll die KI spielen?",
+      "subtitle": "Dies sagt der KI, wie sie handeln soll und welche Perspektive sie verwenden soll.",
+      "placeholder": "z.B. Experte für Marketing, hilfreicher Lehrer, kreativer Autor",
+      "learnMoreTitle": "Welche Rolle sollte ich wählen?",
+      "learnMoreDesc": "Eine Rolle zuzuweisen gibt der KI eine Persona und Expertise-Level. Dies prägt ihre Perspektive, Wissensbasis und Herangehensweise.",
+      "examples": [
+        "Senior Marketing-Berater mit 10 Jahren Erfahrung",
+        "Geduldiger Pädagoge, der komplexe Themen einfach erklärt",
+        "Kreativer Texter spezialisiert auf emotionales Storytelling"
+      ]
+    },
+    "buttons": {
+      "back": "Zurück",
+      "continue": "Weiter",
+      "skip": "Diesen Schritt überspringen",
+      "generate": "Meinen Prompt generieren",
+      "inspiration": "Brauchst du Inspiration? Probiere eines davon:",
+      "learnMore": "Mehr erfahren"
+    },
+    "modal": {
+      "continueButton": "Weiter",
+      "examples": "Beispiele",
+      "example": "Beispiel"
+    }
+  },
+  "result": {
+    "celebration": "Erfolg! Dein Prompt ist einsatzbereit",
+    "title": "Dein perfekter Prompt ist fertig! 🎉",
+    "subtitle": "Kopiere dies und füge es in {{aiModel}} für unglaubliche Ergebnisse ein",
+    "copyButton": "Meinen Experten-Prompt kopieren",
+    "copiedButton": "✓ Kopiert!",
+    "openButton": "In {{aiModel}} öffnen",
+    "refineButton": "Prompt verfeinern",
+    "explainButton": "Prompt erklären",
+    "hideButton": "Prompt verbergen",
+    "explanationTitle": "Deinen Prompt verstehen",
+    "explanationRole": "Rolle: Legt die Perspektive und das Expertise-Level der KI fest.",
+    "explanationContext": "Kontext: Liefert Hintergrundinformationen, damit die KI deine Situation versteht.",
+    "explanationTask": "Aufgabe: Definiert klar, was du von der KI erstellt haben möchtest.",
+    "explanationRequirements": "Anforderungen: Spezifiziert Formatierung, Länge und Einschränkungen.",
+    "explanationTone": "Ton: Bestimmt den Stil und die Stimme der Antwort.",
+    "tipsTitle": "Profi-Tipps für beste Ergebnisse",
+    "tip1": "Füge den gesamten Prompt ein — überspringe keine Abschnitte",
+    "tip2": "Wenn dir die erste Antwort nicht gefällt, klicke 'neu generieren'",
+    "tip3": "Speichere diesen Prompt zur Wiederverwendung — du kannst kleine Details anpassen"
+  },
+  "promptAnatomy": {
+    "title": "Deine Prompt-Vorschau",
+    "role": "Rolle",
+    "roleDesc": "Wer die KI sein soll",
+    "task": "Aufgabe",
+    "taskDesc": "Was du erledigt haben möchtest",
+    "context": "Kontext",
+    "contextDesc": "Hintergrundinformationen",
+    "specialInstructions": "Spezielle Anweisungen",
+    "specialInstructionsDesc": "Regeln und Anforderungen",
+    "proTips": "Profi-Tipps",
+    "tip1": "Verwende spezielle Anweisungen für Präzision",
+    "tip2": "Sei spezifisch über Ton und Stil",
+    "tip3": "Beispiele helfen der KI, Muster zu verstehen",
+    "tip4": "Iteriere an Prompts für bessere Ergebnisse"
+  },
+  "contact": {
+    "title": "Lass uns",
+    "titleHighlight": "verbinden",
+    "subtitle": "Hast du Fragen, Feedback oder möchtest einfach Hallo sagen? Wir würden gerne von dir hören.",
+    "emailCard": {
+      "title": "Schreib uns",
+      "description": "Sende uns jederzeit eine E-Mail. Wir antworten normalerweise innerhalb von 24 Stunden.",
+      "cta": "contact@allensamuel.me"
+    },
+    "feedbackCard": {
+      "title": "Feedback teilen",
+      "description": "Dein Feedback hilft uns, uns zu verbessern. Lass uns wissen, was du denkst!",
+      "cta": "Feedback senden"
+    },
+    "socialCard": {
+      "title": "Folge uns",
+      "description": "Bleib verbunden und erhalte die neuesten Updates in sozialen Medien."
+    },
+    "moreInfo": {
+      "title": "Suchst du mehr?",
+      "description": "Besuche die Website unseres Erstellers für mehr Projekte und Ressourcen.",
+      "cta": "Besuche allensamuel.me"
+    }
+  },
+  "help": {
+    "title": "Hilfe-Center",
+    "subtitle": "Alles was du brauchst, um Prompt Engineering zu meistern"
+  },
+  "templates": {
+    "title": "Vorlagen",
+    "subtitle": "Vorgefertigte Prompt-Vorlagen für einen schnelleren Start",
+    "comingSoon": "Demnächst",
+    "comingSoonDesc": "Wir arbeiten an nützlichen Prompt-Vorlagen für verschiedene Anwendungsfälle. Schau bald wieder vorbei!"
+  },
+  "footer": {
+    "copyright": "Erstellt von"
+  }
+}
