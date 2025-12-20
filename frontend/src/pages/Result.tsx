@@ -255,7 +255,8 @@ const Result = () => {
                   ) : (
                     <>
                       <Copy className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                      <span className="truncate">Copy My Expert Prompt</span>
+                      <span className="sm:hidden">Copy Prompt</span>
+                      <span className="hidden sm:inline">Copy My Expert Prompt</span>
                     </>
                   )}
                 </Button>

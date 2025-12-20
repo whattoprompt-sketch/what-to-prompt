@@ -96,6 +96,7 @@ const Wizard = () => {
       title: t('wizard.step3.title'),
       subtitle: t('wizard.step3.subtitle'),
       field: "aiModel",
+      placeholder: "Select an AI model",
       type: "select",
       options: ["ChatGPT", "Claude", "Gemini", "Mistral", "Nous", "DeepSeek"],
       learnMore: {
