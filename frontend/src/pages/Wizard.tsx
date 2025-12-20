@@ -230,13 +230,13 @@ const Wizard = () => {
 
               {/* Question Card */}
               <Card className="border-2 shadow-elevated overflow-hidden rounded-2xl sm:rounded-3xl">
-                <CardContent className="p-5 sm:p-8 md:p-10">
-                  <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-8">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 animate-scale-in shadow-lg border border-primary/10" aria-hidden="true">
-                      <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
+                <CardContent className="p-4 sm:p-8 md:p-10">
+                  <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 animate-scale-in shadow-lg border border-primary/10" aria-hidden="true">
+                      <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                     </div>
                     <div className="flex-1 space-y-2">
-                      <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">
+                      <h2 className="text-xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">
                         {currentStepData.title}
                       </h2>
                       <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">

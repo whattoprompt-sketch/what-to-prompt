@@ -46,8 +46,8 @@ const Navigation = () => {
           <Link to="/" className="flex items-center gap-2 font-bold hover:opacity-80 transition-opacity group">
             <CircleHelp className="w-6 h-6 sm:w-7 sm:h-7 text-primary group-hover:rotate-12 transition-transform" />
             <span className="font-display text-lg sm:text-xl md:text-2xl tracking-tighter">
-              <span className="hidden xs:inline">What To Prompt</span>
-              <span className="xs:hidden">WTP</span>
+              <span className="hidden sm:inline">What To Prompt</span>
+              <span className="sm:hidden">WTP</span>
             </span>
           </Link>
 
