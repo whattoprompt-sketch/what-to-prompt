@@ -245,17 +245,17 @@ const Result = () => {
                 <Button
                   size="lg"
                   onClick={handleCopy}
-                  className={`font-bold h-16 text-lg sm:text-xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.3)] hover:shadow-primary/40 transition-all flex-1 rounded-2xl ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                  className={`font-bold h-14 sm:h-16 text-base sm:text-xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.3)] hover:shadow-primary/40 transition-all flex-1 rounded-2xl ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
                 >
                   {copied ? (
                     <>
-                      <CheckCircle2 className="w-6 h-6 mr-2" />
-                      ✓ Copied to Clipboard!
+                      <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                      Copied!
                     </>
                   ) : (
                     <>
-                      <Copy className="w-6 h-6 mr-2" />
-                      Copy My Expert Prompt
+                      <Copy className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
+                      <span className="truncate">Copy My Expert Prompt</span>
                     </>
                   )}
                 </Button>

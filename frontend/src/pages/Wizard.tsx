@@ -287,10 +287,9 @@ const Wizard = () => {
                         onValueChange={updateField}
                       >
                         <SelectTrigger
-                          className="text-base h-12 border-2 focus:border-primary"
-                          aria-label={t('wizard.step3.selectPlaceholder')}
+                          className="w-full text-base h-12 border-2 focus:ring-0 focus:ring-offset-0 focus:border-primary rounded-xl"
                         >
-                          <SelectValue placeholder={t('wizard.step3.selectPlaceholder')} />
+                          <SelectValue placeholder={currentStepData.placeholder} />
                         </SelectTrigger>
                         <SelectContent>
                           {currentStepData.options?.map((option) => (
@@ -348,9 +347,7 @@ const Wizard = () => {
                   )}
                   <Button onClick={handleNext} disabled={!isStepValid()} className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/25 rounded-xl px-4 sm:px-8 py-2 sm:py-6 text-sm sm:text-lg font-medium transition-all hover:scale-105 active:scale-95">
                     <span className="mr-1 sm:mr-2">{currentStep === totalSteps ? t('wizard.buttons.generate') : t('wizard.buttons.continue')}</span>
-                    {currentStep === totalSteps ? (
-                      <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" />
-                    ) : (
+                    {currentStep !== totalSteps && (
                       <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                     )}
                   </Button>
