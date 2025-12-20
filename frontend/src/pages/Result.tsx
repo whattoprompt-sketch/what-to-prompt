@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Copy, RefreshCw, Sparkles, CheckCircle2, Lightbulb } from "lucide-react";
+import { Copy, RefreshCw, Lightbulb, CheckCircle2, Sparkles, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import PromptAnatomy from "@/components/PromptAnatomy";
 
