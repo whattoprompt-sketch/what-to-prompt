@@ -261,7 +261,7 @@ const Wizard = () => {
                           placeholder={currentStepData.placeholder}
                           value={promptData[currentStepData.field as keyof PromptData]}
                           onChange={(e) => updateField(e.target.value)}
-                          className="min-h-[100px] sm:min-h-[140px] text-sm sm:text-base resize-none border-2 focus:border-primary rounded-xl"
+                          className="min-h-[100px] sm:min-h-[140px] text-sm sm:text-base resize-none border-2 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary rounded-xl"
                           autoFocus
                           aria-label={currentStepData.title}
                           aria-describedby={`step-${currentStep}-hint`}
@@ -274,7 +274,7 @@ const Wizard = () => {
                         placeholder={currentStepData.placeholder}
                         value={promptData[currentStepData.field as keyof PromptData]}
                         onChange={(e) => updateField(e.target.value)}
-                        className="text-base h-12 border-2 focus:border-primary"
+                        className="text-base h-12 border-2 focus-visible:ring-0 focus-visible:ring-offset-0 focus:border-primary rounded-xl"
                         autoFocus
                         aria-label={currentStepData.title}
                         aria-describedby={`step-${currentStep}-hint`}
