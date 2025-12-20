@@ -261,19 +261,11 @@ const Wizard = () => {
                           placeholder={currentStepData.placeholder}
                           value={promptData[currentStepData.field as keyof PromptData]}
                           onChange={(e) => updateField(e.target.value)}
-                          className="min-h-[100px] sm:min-h-[140px] text-sm sm:text-base resize-none border-2 focus:border-primary pr-12 sm:pr-20"
+                          className="min-h-[100px] sm:min-h-[140px] text-sm sm:text-base resize-none border-2 focus:border-primary rounded-xl"
                           autoFocus
                           aria-label={currentStepData.title}
                           aria-describedby={`step-${currentStep}-hint`}
                         />
-                        <div className="absolute bottom-3 right-3 flex gap-2" aria-hidden="true">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Sparkles className="w-4 h-4 text-primary" />
-                          </div>
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Target className="w-4 h-4 text-primary" />
-                          </div>
-                        </div>
                       </div>
                     )}
 
