@@ -180,7 +180,7 @@ const Result = () => {
           <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-4 px-4 text-center animate-fade-in shadow-lg">
             <div className="flex items-center justify-center gap-2 font-semibold">
               <Sparkles className="w-5 h-5 animate-pulse" />
-              <span>🎉 Success! Your prompt is ready to use</span>
+              <span>Success! Your prompt is ready to use</span>
               <Sparkles className="w-5 h-5 animate-pulse" />
             </div>
           </div>
