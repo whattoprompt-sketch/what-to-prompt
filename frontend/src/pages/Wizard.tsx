@@ -229,8 +229,8 @@ const Wizard = () => {
               </div>
 
               {/* Question Card */}
-              <Card className="border-2 shadow-elevated overflow-hidden rounded-xl sm:rounded-3xl">
-                <CardContent className="p-3 sm:p-8 md:p-10">
+              <Card className="border-0 shadow-none bg-transparent sm:bg-card sm:border-2 sm:shadow-elevated overflow-hidden rounded-none sm:rounded-3xl">
+                <CardContent className="p-0 sm:p-8 md:p-10">
                   <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-6 mb-4 sm:mb-8">
                     <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center flex-shrink-0 animate-scale-in shadow-lg border border-primary/10" aria-hidden="true">
                       <Icon className="w-5 h-5 sm:w-8 sm:h-8 text-primary" />
