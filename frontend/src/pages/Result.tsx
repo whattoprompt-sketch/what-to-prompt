@@ -108,11 +108,8 @@ const Result = () => {
       setExpertPrompt(data.expert_prompt);
       setExplanation(data.explanation);
 
-      // Save to history if user is logged in
-      if (user) {
-        saveSession(data.expert_prompt, data.explanation);
-      }
-
+      // Remove direct save here to avoid race conditions. 
+      // The new useEffect below handles saving once user + prompt are both ready.
     } catch (err: any) {
       console.error(err);
       if (err.name === 'AbortError') {
@@ -137,6 +134,14 @@ const Result = () => {
       fetchExpertPrompt();
     }
   }, [promptData, user, hasStartedFetch]);
+
+  // FIX: Reactive Save Effect 
+  // Watch for when User AND ExpertPrompt are both available
+  useEffect(() => {
+    if (user && expertPrompt && explanation && !isSaved && !fromHistory) {
+      saveSession(expertPrompt, explanation);
+    }
+  }, [user, expertPrompt, explanation, isSaved, fromHistory]);
 
   // Use the fetched prompt, or fall back to empty string while loading
   const prompt = expertPrompt;
