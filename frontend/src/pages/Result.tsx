@@ -245,20 +245,22 @@ const Result = () => {
                 <Button
                   size="lg"
                   onClick={handleCopy}
-                  className={`font-bold h-14 sm:h-16 text-base sm:text-xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.3)] hover:shadow-primary/40 transition-all flex-1 rounded-2xl ${copied ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                  className={`relative overflow-hidden font-bold h-auto py-4 sm:py-6 text-lg sm:text-2xl shadow-lg shadow-primary/25 hover:shadow-primary/40 active:scale-95 transition-all flex-1 rounded-xl sm:rounded-2xl border border-white/10 ${copied ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary/90'}`}
                 >
-                  {copied ? (
-                    <>
-                      <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-5 h-5 sm:w-6 sm:h-6 mr-2" />
-                      <span className="sm:hidden">Copy Prompt</span>
-                      <span className="hidden sm:inline">Copy My Expert Prompt</span>
-                    </>
-                  )}
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 z-10">
+                    {copied ? (
+                      <>
+                        <CheckCircle2 className="w-5 h-5 sm:w-7 sm:h-7 animate-in zoom-in spin-in-50 duration-300" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-5 h-5 sm:w-7 sm:h-7" />
+                        <span className="sm:hidden">Copy Prompt</span>
+                        <span className="hidden sm:inline">Copy My Expert Prompt</span>
+                      </>
+                    )}
+                  </div>
                 </Button>
                 {copied && promptData.aiModel && aiUrls[promptData.aiModel] && (
                   <Button
