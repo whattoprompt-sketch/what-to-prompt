@@ -327,62 +327,34 @@ const Wizard = () => {
                 </CardContent>
               </Card>
 
-              {/* Navigation */}
-              <div className="flex gap-4">
-                {currentStep > 1 && (
-                  <Button
-                    variant="outline"
-                    onClick={handleBack}
-                    size="lg"
-                    className="flex-1"
-                    aria-label={t('wizard.buttons.back')}
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
-                    {t('wizard.buttons.back')}
-                  </Button>
-                )}
-                {isOptionalStep && !promptData[currentStepData.field as keyof PromptData] && (
-                  <Button
-                    variant="ghost"
-                    onClick={handleSkip}
-                    size="lg"
-                    className="flex-1"
-                    aria-label={t('wizard.buttons.skip')}
-                  >
-                    <SkipForward className="w-4 h-4 mr-2" aria-hidden="true" />
-                    {t('wizard.buttons.skip')}
-                  </Button>
-                )}
-                <Button
-                  onClick={handleNext}
-                  disabled={!isStepValid()}
-                  size="lg"
-                  className="flex-1 font-semibold"
-                  aria-label={currentStep === totalSteps ? t('wizard.buttons.generate') : t('wizard.buttons.continue')}
+              disabled={!isStepValid()}
+              size="lg"
+              className="flex-1 font-semibold"
+              aria-label={currentStep === totalSteps ? t('wizard.buttons.generate') : t('wizard.buttons.continue')}
                 >
-                  {currentStep === totalSteps ? (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
-                      {t('wizard.buttons.generate')}
-                    </>
-                  ) : (
-                    <>
-                      {t('wizard.buttons.continue')}
-                      <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            {/* Sidebar */}
-            <div className="hidden lg:block lg:sticky lg:top-8 h-fit">
-              <PromptAnatomy promptData={promptData} currentStep={currentStep} />
-            </div>
+              {currentStep === totalSteps ? (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
+                  {t('wizard.buttons.generate')}
+                </>
+              ) : (
+                <>
+                  {t('wizard.buttons.continue')}
+                  <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
+                </>
+              )}
+            </Button>
           </div>
         </div>
+
+        {/* Sidebar */}
+        <div className="hidden lg:block lg:sticky lg:top-8 h-fit">
+          <PromptAnatomy promptData={promptData} currentStep={currentStep} />
+        </div>
       </div>
-      <Footer />
+    </div >
+      </div >
+  <Footer />
     </>
   );
 };
