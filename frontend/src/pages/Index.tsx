@@ -1,85 +1,59 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, Target, Zap, TrendingUp, ArrowRight, Wand2, Brain, Rocket, CircleHelp } from "lucide-react";
+import { TrendingUp, ArrowRight, Wand2, Brain, Rocket } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Footer from "@/components/Footer";
+
+const features = [
+  {
+    icon: Wand2,
+    // title and description handled by translation
+  },
+  {
+    icon: Brain,
+    // title and description handled by translation
+  },
+  {
+    icon: Rocket,
+    // title and description handled by translation
+  },
+];
+
+const examplePrompts = [
+  {
+    before: "Write a blog post",
+    after: "You are an expert content strategist. Write a 1200-word SEO-optimized blog post about sustainable living for environmentally-conscious millennials. Use a friendly, inspiring tone...",
+    improvement: "3x more detailed responses",
+  },
+  {
+    before: "Help me with marketing",
+    after: "You are a senior marketing consultant. Analyze this product launch strategy and provide 5 specific improvements with expected ROI. Focus on digital channels...",
+    improvement: "Actionable insights",
+  },
+];
 
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
   useEffect(() => {
-    const handleScroll = () => {
-      const elements = document.querySelectorAll('.scroll-animate');
-      elements.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight - 100;
-        if (isVisible) {
-          el.classList.add('animate-fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in');
+          observer.unobserve(entry.target);
         }
       });
-    };
+    }, { threshold: 0.1 });
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    document.querySelectorAll<HTMLElement>('.scroll-animate').forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
   }, []);
-
-  const features = [
-    {
-      icon: Wand2,
-      title: "Interactive Wizard",
-      description: "Answer 5 simple questions in 2 minutes",
-      outcome: "Get professional-grade prompts while learning prompt engineering",
-    },
-    {
-      icon: Brain,
-      title: "Learn as You Build",
-      description: "See your prompt structure in real-time",
-      outcome: "Understand what makes prompts work so you can improve them yourself",
-    },
-    {
-      icon: Rocket,
-      title: "Instant Results",
-      description: "Copy and paste directly into any AI tool",
-      outcome: "Start getting better AI responses in seconds, not hours",
-    },
-  ];
-
-  const testimonials = [
-    {
-      text: "Improved my ChatGPT results by 10x. I finally understand how to talk to AI!",
-      author: "Sarah Chen",
-      role: "Content Marketer",
-      rating: 5,
-    },
-    {
-      text: "Used to spend 20 minutes crafting prompts. Now it takes 2 minutes and works better.",
-      author: "Marcus Rodriguez",
-      role: "Product Manager",
-    },
-    {
-      text: "Game-changer for my freelance writing. Clients love the quality improvement.",
-      author: "Jessica Park",
-      role: "Freelance Writer",
-    },
-  ];
-
-  const examplePrompts = [
-    {
-      before: "Write a blog post",
-      after: "You are an expert content strategist. Write a 1200-word SEO-optimized blog post about sustainable living for environmentally-conscious millennials. Use a friendly, inspiring tone...",
-      improvement: "3x more detailed responses",
-    },
-    {
-      before: "Help me with marketing",
-      after: "You are a senior marketing consultant. Analyze this product launch strategy and provide 5 specific improvements with expected ROI. Focus on digital channels...",
-      improvement: "Actionable insights",
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
@@ -104,7 +78,6 @@ const Index = () => {
               onClick={() => navigate("/wizard")}
               className="w-full sm:w-auto text-lg sm:text-xl px-8 sm:px-12 py-7 sm:py-8 h-auto shadow-[0_20px_50px_-12px_rgba(59,130,246,0.3)] hover:shadow-primary/40 transition-all hover:scale-105 group font-bold rounded-2xl"
             >
-              <Sparkles className="w-5 h-5 sm:w-6 h-6 mr-2 group-hover:rotate-12 transition-transform" />
               {t('hero.cta')}
               <ArrowRight className="w-5 h-5 sm:w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>

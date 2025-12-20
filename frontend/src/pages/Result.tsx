@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,14 +9,39 @@ import { Copy, RefreshCw, Lightbulb, CheckCircle2, Sparkles, ExternalLink } from
 import { toast } from "sonner";
 import PromptAnatomy from "@/components/PromptAnatomy";
 
+interface WizardInputs {
+  role?: string;
+  task?: string;
+  context?: string;
+  requirements?: string;
+  tone?: string;
+  aiModel?: string;
+}
+
+interface ResultLocationState {
+  promptData?: WizardInputs;
+  expertPrompt?: string;
+  explanation?: string;
+  fromHistory?: boolean;
+}
+
 const Result = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { promptData, expertPrompt: initialPrompt, explanation: initialExplanation, fromHistory } = location.state || {};
+  const {
+    promptData,
+    expertPrompt: initialPrompt,
+    explanation: initialExplanation,
+    fromHistory,
+  } = (location.state as ResultLocationState) || {};
+
+  // Safe access to promptData properties to avoid runtime errors if state is missing
+  const safePromptData: WizardInputs = promptData ?? {};
+
   const [showCelebration, setShowCelebration] = useState(!fromHistory);
   const [copied, setCopied] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const [expertPrompt, setExpertPrompt] = useState(initialPrompt || "");
   const [explanation, setExplanation] = useState(initialExplanation || "");
@@ -34,40 +60,43 @@ const Result = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!promptData) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    if (!promptData) {
+      navigate("/");
+    }
+  }, [promptData, navigate]);
 
-  const saveSession = async (prompt: string, reason: string) => {
+
+  const saveSession = useCallback(async (prompt: string, reason: string) => {
     if (!user || isSaved || fromHistory) return;
 
     try {
       console.log("Saving session to database...");
       const { error } = await supabase.from("prompt_sessions").insert({
         user_id: user.id,
-        ai_model: promptData.aiModel || "ChatGPT",
+        ai_model: safePromptData.aiModel || "ChatGPT",
         generated_prompt: prompt,
         explanation: reason,
         wizard_inputs: {
-          role: promptData.role,
-          task: promptData.task,
-          context: promptData.context,
-          constraints: promptData.requirements,
-          tone: promptData.tone
+          role: safePromptData.role,
+          task: safePromptData.task,
+          context: safePromptData.context,
+          constraints: safePromptData.requirements,
+          tone: safePromptData.tone
         }
       });
 
       if (error) throw error;
       setIsSaved(true);
       console.log("Session saved successfully!");
-    } catch (err: any) {
-      console.error("Error saving session:", err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
+      console.error("Error saving session:", errorMessage);
     }
-  };
+  }, [user, isSaved, fromHistory, safePromptData]);
 
   // Function to fetch the enhanced prompt from backend
-  const fetchExpertPrompt = async () => {
+  const fetchExpertPrompt = useCallback(async () => {
     if (initialPrompt) return; // Don't fetch if we already have it (from history)
 
     const controller = new AbortController();
@@ -87,13 +116,13 @@ const Result = () => {
         },
         body: JSON.stringify({
           messages: [],
-          target_model: promptData.aiModel || "ChatGPT",
+          target_model: safePromptData.aiModel || "ChatGPT",
           mode: "visual",
-          role: promptData.role,
-          task: promptData.task,
-          context: promptData.context,
-          constraints: promptData.requirements,
-          tone: promptData.tone
+          role: safePromptData.role,
+          task: safePromptData.task,
+          context: safePromptData.context,
+          constraints: safePromptData.requirements,
+          tone: safePromptData.tone
         }),
         signal: controller.signal
       });
@@ -110,9 +139,9 @@ const Result = () => {
 
       // Remove direct save here to avoid race conditions. 
       // The new useEffect below handles saving once user + prompt are both ready.
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      if (err.name === 'AbortError') {
+      if (err instanceof Error && err.name === 'AbortError') {
         setError("Request timed out. The AI service is taking too long.");
         toast.error("Generation timed out. Please try again.");
       } else {
@@ -123,9 +152,8 @@ const Result = () => {
       setLoading(false);
       clearTimeout(timeoutId);
     }
-  };
+  }, [initialPrompt, safePromptData]);
 
-  const fetchingRef = useState(false); // Using state to track if we've already started fetching
   const [hasStartedFetch, setHasStartedFetch] = useState(false);
 
   useEffect(() => {
@@ -133,7 +161,7 @@ const Result = () => {
       setHasStartedFetch(true);
       fetchExpertPrompt();
     }
-  }, [promptData, user, hasStartedFetch]);
+  }, [promptData, initialPrompt, hasStartedFetch, fetchExpertPrompt]);
 
   // FIX: Reactive Save Effect 
   // Watch for when User AND ExpertPrompt are both available
@@ -141,18 +169,21 @@ const Result = () => {
     if (user && expertPrompt && explanation && !isSaved && !fromHistory) {
       saveSession(expertPrompt, explanation);
     }
-  }, [user, expertPrompt, explanation, isSaved, fromHistory]);
+  }, [user, expertPrompt, explanation, isSaved, fromHistory, saveSession]);
+
 
   // Use the fetched prompt, or fall back to empty string while loading
   const prompt = expertPrompt;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(prompt);
-    setCopied(true);
-    toast.success("Copied to clipboard!", {
-      description: "Now paste it into your AI tool and watch the magic happen!",
-    });
-    setTimeout(() => setCopied(false), 2000);
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(prompt);
+      setCopied(true);
+      toast.success("Copied to clipboard!", {
+        description: "Now paste it into your AI tool and watch the magic happen!",
+      });
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const handleRefine = () => {
@@ -170,6 +201,7 @@ const Result = () => {
     Mistral: "https://chat.mistral.ai",
     Nous: "https://nous.chat",
     DeepSeek: "https://chat.deepseek.com",
+    Perplexity: "https://www.perplexity.ai",
   };
 
   return (
@@ -231,11 +263,11 @@ const Result = () => {
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
                     <span className="inline-flex items-center gap-3 sm:flex-row flex-col">
                       <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12 text-primary" />
-                      Your Perfect Prompt is Ready! 🎉
+                      Your Perfect Prompt is Ready!
                     </span>
                   </h1>
                   <p className="text-muted-foreground text-lg sm:text-xl font-medium max-w-2xl">
-                    Copy this and paste it into <span className="text-primary font-bold">{promptData.aiModel || "your AI tool"}</span> for incredible results.
+                    Copy this and paste it into <span className="text-primary font-bold">{safePromptData.aiModel || "your AI tool"}</span> for incredible results.
                   </p>
                 </div>
               )}
@@ -262,14 +294,14 @@ const Result = () => {
                     )}
                   </div>
                 </Button>
-                {copied && promptData.aiModel && aiUrls[promptData.aiModel] && (
+                {copied && safePromptData.aiModel && aiUrls[safePromptData.aiModel] && (
                   <Button
                     size="lg"
                     variant="outline"
-                    onClick={() => window.open(aiUrls[promptData.aiModel], '_blank')}
+                    onClick={() => window.open(aiUrls[safePromptData.aiModel], '_blank')}
                     className="font-bold h-auto py-4 sm:py-6 text-lg sm:text-2xl shadow-lg border-2 border-primary/20 hover:border-primary hover:bg-primary/5 active:scale-95 transition-all flex-1 rounded-xl sm:rounded-2xl shrink-0 animate-in slide-in-from-left-2 fade-in duration-300"
                   >
-                    Open in {promptData.aiModel}
+                    Open in {safePromptData.aiModel}
                     <ExternalLink className="ml-2 w-5 h-5 sm:w-7 sm:h-7" />
                   </Button>
                 )}
@@ -346,7 +378,7 @@ const Result = () => {
 
             {/* Sidebar */}
             <div className="hidden lg:block lg:sticky lg:top-8 h-fit">
-              <PromptAnatomy promptData={promptData} currentStep={6} />
+              <PromptAnatomy promptData={safePromptData} currentStep={6} />
             </div>
           </div>
         </div>

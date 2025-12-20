@@ -1,13 +1,14 @@
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Target, Sparkles, Lightbulb, MapPin } from "lucide-react";
 
 interface PromptData {
-  task: string;
-  context: string;
-  aiModel: string;
-  tone: string;
-  role: string;
+  task?: string;
+  context?: string;
+  aiModel?: string;
+  tone?: string;
+  role?: string;
   requirements?: string;
 }
 
@@ -19,43 +20,43 @@ interface PromptAnatomyProps {
 const PromptAnatomy = ({ promptData, currentStep }: PromptAnatomyProps) => {
   const { t } = useTranslation();
 
-  const sections = [
+  const sections = useMemo(() => [
     {
       icon: Target,
       title: t('promptAnatomy.role'),
       description: t('promptAnatomy.roleDesc'),
-      value: promptData.role,
+      value: promptData.role ?? "",
       step: 6,
     },
     {
       icon: Sparkles,
       title: t('promptAnatomy.task'),
       description: t('promptAnatomy.taskDesc'),
-      value: promptData.task,
+      value: promptData.task ?? "",
       step: 1,
     },
     {
       icon: BookOpen,
       title: t('promptAnatomy.context'),
       description: t('promptAnatomy.contextDesc'),
-      value: promptData.context,
+      value: promptData.context ?? "",
       step: 2,
     },
     {
       icon: Sparkles,
       title: "Target AI",
       description: "Which AI model you're optimizing for",
-      value: promptData.aiModel,
+      value: promptData.aiModel ?? "",
       step: 3,
     },
     {
       icon: MapPin,
       title: t('promptAnatomy.specialInstructions'),
       description: t('promptAnatomy.specialInstructionsDesc'),
-      value: promptData.requirements || promptData.tone,
+      value: (promptData.requirements ?? "") || (promptData.tone ?? ""),
       step: 5,
     },
-  ];
+  ], [t, promptData]);
 
   return (
     <Card className="border-2" role="complementary" aria-label={t('promptAnatomy.title')}>
@@ -66,14 +67,14 @@ const PromptAnatomy = ({ promptData, currentStep }: PromptAnatomyProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {sections.map((section, index) => {
+        {sections.map((section) => {
           const Icon = section.icon;
           const isActive = currentStep >= section.step;
           const hasContent = section.value && section.value.trim().length > 0;
 
           return (
             <div
-              key={index}
+              key={section.title}
               className={`space-y-2 pb-4 border-b last:border-b-0 ${!isActive ? "opacity-50" : ""
                 }`}
               role="listitem"
