@@ -266,11 +266,11 @@ const Result = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    onClick={() => window.open(aiUrls[promptData.aiModel], "_blank")}
-                    className="font-semibold h-14 text-base shadow-lg hover:shadow-xl transition-all flex-1 border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                    onClick={() => window.open(aiUrls[promptData.aiModel], '_blank')}
+                    className="font-bold h-auto py-4 sm:py-6 text-lg sm:text-2xl shadow-lg border-2 border-primary/20 hover:border-primary hover:bg-primary/5 active:scale-95 transition-all flex-1 rounded-xl sm:rounded-2xl shrink-0 animate-in slide-in-from-left-2 fade-in duration-300"
                   >
                     Open in {promptData.aiModel}
-                    <Sparkles className="w-5 h-5 ml-2" />
+                    <ExternalLink className="ml-2 w-5 h-5 sm:w-7 sm:h-7" />
                   </Button>
                 )}
               </div>
