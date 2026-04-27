@@ -28,8 +28,10 @@ origins = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "https://chipper-bombolone-83adcd.netlify.app",
-    "https://whattoprompt.com",   
+    "https://whattoprompt.com",
     "https://www.whattoprompt.com",
+    "http://whattoprompt.com",
+    "http://www.whattoprompt.com",
 ]
 
 app.add_middleware(

@@ -2,7 +2,7 @@
 
 from typing import List, Dict, Optional, Tuple, Any, Union 
 from models.chat_models import ChatMessage, AuditResult
-from services.openrouter_client import get_ai_response
+from services.llm_service import call_ai_with_fallback
 from core.prompt_quality_scorer import PromptQualityScorer
 from core.vocabulary_mapper import VocabularyMapper
 import logging
@@ -802,28 +802,7 @@ def create_system_prompt(
 # ==========================================
 # API INTERACTION WITH RETRY LOGIC (RETAINED)
 # ==========================================
-async def call_ai_with_fallback(
-    messages: List[ChatMessage],
-    primary_model: str = ModelConfig.PRIMARY_MODEL
-) -> Tuple[str, Optional[str]]:
-    """Calls AI API with fallback strategy for reliability."""
-    models_to_try = [primary_model] + ModelConfig.FALLBACK_MODELS
-    
-    last_error = ""
-    for attempt, model in enumerate(models_to_try):
-        try:
-            logger.info(f"Attempting API call with model: {model} (attempt {attempt + 1})")
-            response = await get_ai_response(messages=messages, model=model)
-            return response, None
-            
-        except Exception as e:
-            last_error = str(e)
-            logger.warning(f"Model {model} failed: {last_error}")
-            
-            if "429" in last_error: return "", "rate_limit"
-            if attempt < len(models_to_try) - 1: continue
-            
-    return "", f"Generation failed: {last_error}"
+
 
 
 def format_response(raw_response: str) -> Tuple[str, str]:
