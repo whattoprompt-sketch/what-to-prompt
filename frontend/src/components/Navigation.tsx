@@ -53,6 +53,7 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-3 sm:gap-4 md:gap-6">
+            {/* 
             <Link
               to="/help"
               className="text-xs sm:text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
@@ -64,24 +65,25 @@ const Navigation = () => {
               className="text-xs sm:text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
             >
               {t('nav.templates')}
-            </Link>
+            </Link> 
+            */}
             {user && (
               <Link
                 to="/history"
                 className="text-xs sm:text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
               >
-                History
+                {t('nav.history')}
               </Link>
             )}
             <LanguageSelector />
             {user ? (
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-xs sm:text-sm">
-                Sign Out
+                {t('nav.signOut')}
               </Button>
             ) : !isAuthPage ? (
               <Link to="/auth">
                 <Button variant="default" size="sm" className="text-xs sm:text-sm">
-                  Sign In
+                  {t('nav.signIn')}
                 </Button>
               </Link>
             ) : null}
@@ -104,6 +106,7 @@ const Navigation = () => {
                   </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col gap-4 mt-8">
+                  {/* 
                   <Link
                     to="/help"
                     className="text-base font-medium text-foreground/70 hover:text-foreground transition-colors py-2"
@@ -117,25 +120,26 @@ const Navigation = () => {
                     onClick={() => setOpen(false)}
                   >
                     {t('nav.templates')}
-                  </Link>
+                  </Link> 
+                  */}
                   {user && (
                     <Link
                       to="/history"
                       className="text-base font-medium text-foreground/70 hover:text-foreground transition-colors py-2"
                       onClick={() => setOpen(false)}
                     >
-                      History
+                      {t('nav.history')}
                     </Link>
                   )}
                   <div className="mt-4 border-t pt-4">
                     {user ? (
                       <Button variant="outline" className="w-full" onClick={handleSignOut}>
-                        Sign Out
+                        {t('nav.signOut')}
                       </Button>
                     ) : !isAuthPage ? (
                       <Link to="/auth" onClick={() => setOpen(false)}>
                         <Button variant="default" className="w-full">
-                          Sign In
+                          {t('nav.signIn')}
                         </Button>
                       </Link>
                     ) : null}

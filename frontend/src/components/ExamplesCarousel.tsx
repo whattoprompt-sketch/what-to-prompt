@@ -7,31 +7,19 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-
-const examples = [
-  {
-    before: "Write a blog post about productivity",
-    after: "As an experienced content strategist, write a 1,200-word blog post about productivity hacks for remote workers. Target audience: tech professionals aged 25-40. Tone: Professional yet approachable. Include 5 actionable tips with real examples."
-  },
-  {
-    before: "Help me with marketing",
-    after: "As a senior marketing consultant, create a 3-email welcome sequence for new subscribers to a meditation app. Audience: stressed professionals seeking work-life balance. Tone: Calm and empathetic. Each email should be 150-200 words with a clear CTA."
-  },
-  {
-    before: "Make a social media post",
-    after: "As a social media expert, create 5 Instagram captions for a sustainable fashion brand launching eco-friendly sneakers. Target: environmentally conscious millennials. Tone: Inspiring and authentic. Include relevant hashtags and emojis."
-  },
-  {
-    before: "Explain this concept",
-    after: "As a patient educator, explain quantum computing to a 12-year-old with no technical background. Use simple analogies from everyday life. Keep it under 300 words. Make it engaging and avoid jargon completely."
-  },
-  {
-    before: "Create a sales email",
-    after: "As a B2B sales expert, write a cold outreach email to CTOs of mid-sized tech companies introducing our cybersecurity solution. Tone: Professional and value-focused. Length: 150 words max. Include a clear meeting request CTA."
-  }
-];
+import { useTranslation } from "react-i18next";
 
 const ExamplesCarousel = () => {
+  const { t } = useTranslation();
+
+  const examples = [
+    { before: t("examples.example1.before"), after: t("examples.example1.after") },
+    { before: t("examples.example2.before"), after: t("examples.example2.after") },
+    { before: t("examples.example3.before"), after: t("examples.example3.after") },
+    { before: t("examples.example4.before"), after: t("examples.example4.after") },
+    { before: t("examples.example5.before"), after: t("examples.example5.after") },
+  ];
+
   return (
     <Carousel
       opts={{

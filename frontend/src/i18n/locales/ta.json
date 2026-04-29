@@ -3,7 +3,10 @@
     "home": "என்ன கேட்க வேண்டும்",
     "help": "உதவி",
     "templates": "வார்ப்புருக்கள்",
-    "contact": "தொடர்பு"
+    "contact": "தொடர்பு",
+    "history": "History",
+    "signIn": "Sign In",
+    "signOut": "Sign Out"
   },
   "hero": {
     "title": "யூகிப்பதை நிறுத்துங்கள்.",
@@ -169,6 +172,8 @@
     "taskDesc": "நீங்கள் என்ன செய்ய விரும்புகிறீர்கள்",
     "context": "சூழல்",
     "contextDesc": "பின்னணி தகவல்",
+    "aiModel": "Target AI",
+    "aiModelDesc": "Which AI model you're optimizing for",
     "specialInstructions": "சிறப்பு வழிமுறைகள்",
     "specialInstructionsDesc": "விதிகள் மற்றும் தேவைகள்",
     "proTips": "புரோ குறிப்புகள்",

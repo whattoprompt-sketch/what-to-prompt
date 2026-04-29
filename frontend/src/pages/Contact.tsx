@@ -63,14 +63,18 @@ const Contact = () => {
                   <p className="text-muted-foreground mb-4">
                     {t('contact.feedbackCard.description')}
                   </p>
-                  <Button
-                    variant="outline"
-                    className="group/btn"
-                    onClick={() => window.location.href = 'mailto:contact@allensamuel.me?subject=Feedback for What to Prompt'}
+                  <a
+                    href="mailto:contact@allensamuel.me?subject=Feedback for What to Prompt"
+                    className="inline-flex"
                   >
-                    {t('contact.feedbackCard.cta')}
-                    <Send className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
+                    <Button
+                      variant="outline"
+                      className="group/btn"
+                    >
+                      {t('contact.feedbackCard.cta')}
+                      <Send className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                    </Button>
+                  </a>
                 </CardContent>
               </Card>
             </div>
@@ -84,24 +88,28 @@ const Contact = () => {
                 <p className="text-muted-foreground mb-4">
                   {t('contact.socialCard.description')}
                 </p>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button
                     variant="outline"
                     size="lg"
                     className="flex-1 group"
-                    onClick={() => window.open('https://www.linkedin.com/company/whattoprompt/', '_blank')}
+                    asChild
                   >
-                    <Linkedin className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                    LinkedIn
+                    <a href="https://www.linkedin.com/company/whattoprompt/" target="_blank" rel="noopener noreferrer">
+                      <Linkedin className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                      LinkedIn
+                    </a>
                   </Button>
                   <Button
                     variant="outline"
                     size="lg"
                     className="flex-1 group"
-                    onClick={() => window.open('https://www.instagram.com/whattoprompt/', '_blank')}
+                    asChild
                   >
-                    <Instagram className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                    Instagram
+                    <a href="https://www.instagram.com/whattoprompt/" target="_blank" rel="noopener noreferrer">
+                      <Instagram className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                      Instagram
+                    </a>
                   </Button>
                 </div>
               </CardContent>
@@ -119,9 +127,11 @@ const Contact = () => {
                     variant="default"
                     size="lg"
                     className="shadow-lg hover:shadow-xl transition-all hover:scale-105"
-                    onClick={() => window.open('https://allensamuel.me/', '_blank')}
+                    asChild
                   >
-                    {t('contact.moreInfo.cta')}
+                    <a href="https://allensamuel.me/" target="_blank" rel="noopener noreferrer">
+                      {t('contact.moreInfo.cta')}
+                    </a>
                   </Button>
                 </div>
               </CardContent>

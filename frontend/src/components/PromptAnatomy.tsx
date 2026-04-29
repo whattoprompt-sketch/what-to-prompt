@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Target, Sparkles, Lightbulb, MapPin } from "lucide-react";
+import { BookOpen, Target, Sparkles, Lightbulb, MapPin, Cpu, ClipboardCheck } from "lucide-react";
 
 interface PromptData {
   task?: string;
@@ -29,7 +29,7 @@ const PromptAnatomy = ({ promptData, currentStep }: PromptAnatomyProps) => {
       step: 6,
     },
     {
-      icon: Sparkles,
+      icon: ClipboardCheck,
       title: t('promptAnatomy.task'),
       description: t('promptAnatomy.taskDesc'),
       value: promptData.task ?? "",
@@ -43,9 +43,9 @@ const PromptAnatomy = ({ promptData, currentStep }: PromptAnatomyProps) => {
       step: 2,
     },
     {
-      icon: Sparkles,
-      title: "Target AI",
-      description: "Which AI model you're optimizing for",
+      icon: Cpu,
+      title: t('promptAnatomy.aiModel'),
+      description: t('promptAnatomy.aiModelDesc'),
       value: promptData.aiModel ?? "",
       step: 3,
     },

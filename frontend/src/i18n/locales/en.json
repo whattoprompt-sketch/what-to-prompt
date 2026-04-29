@@ -3,7 +3,10 @@
     "home": "What to Prompt",
     "help": "Help",
     "templates": "Templates",
-    "contact": "Contact"
+    "contact": "Contact",
+    "history": "History",
+    "signIn": "Sign In",
+    "signOut": "Sign Out"
   },
   "hero": {
     "title": "Stop Guessing.",
@@ -166,6 +169,8 @@
     "taskDesc": "What you want done",
     "context": "Context",
     "contextDesc": "Background information",
+    "aiModel": "Target AI",
+    "aiModelDesc": "Which AI model you're optimizing for",
     "specialInstructions": "Special Instructions",
     "specialInstructionsDesc": "Rules and requirements",
     "proTips": "Pro Tips",

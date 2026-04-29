@@ -3,7 +3,10 @@
     "home": "Was zu prompten",
     "help": "Hilfe",
     "templates": "Vorlagen",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "history": "Verlauf",
+    "signIn": "Anmelden",
+    "signOut": "Abmelden"
   },
   "hero": {
     "title": "Hören Sie auf zu raten.",
@@ -169,6 +172,8 @@
     "taskDesc": "Was du erledigt haben möchtest",
     "context": "Kontext",
     "contextDesc": "Hintergrundinformationen",
+    "aiModel": "Ziel-KI",
+    "aiModelDesc": "Für welches KI-Modell Sie optimieren",
     "specialInstructions": "Spezielle Anweisungen",
     "specialInstructionsDesc": "Regeln und Anforderungen",
     "proTips": "Profi-Tipps",

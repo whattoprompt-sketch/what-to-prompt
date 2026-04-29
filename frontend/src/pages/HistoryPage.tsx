@@ -18,13 +18,21 @@ import { toast } from "sonner";
 import Footer from "@/components/Footer";
 import { format } from "date-fns";
 
+interface WizardInputs {
+    role: string;
+    task: string;
+    context: string;
+    constraints: string;
+    tone: string;
+}
+
 interface PromptSession {
     id: string;
     user_id: string;
     ai_model: string;
     generated_prompt: string;
     explanation: string;
-    wizard_inputs: any;
+    wizard_inputs: WizardInputs;
     created_at: string;
 }
 

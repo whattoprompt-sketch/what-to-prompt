@@ -1,4 +1,4 @@
-import random
+import zlib
 from typing import Dict, List, Optional
 
 class VocabularyMapper:
@@ -56,7 +56,9 @@ class VocabularyMapper:
             if key in raw_l:
                 # Remove the novice word even in the strategic task string
                 clean_context = raw_task.lower().replace(key, "").strip()
-                return f"{random.choice(options)} {clean_context}".strip()
+                # Deterministic selection based on input string
+                idx = zlib.adler32(raw_task.encode()) % len(options)
+                return f"{options[idx]} {clean_context}".strip()
         # FALLBACK: Use generic strategic language
         return "Synthesize and architect a production-grade framework for the target domain."
 

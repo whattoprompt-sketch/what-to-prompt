@@ -22,9 +22,7 @@ const Footer = () => {
             <p className="text-xs sm:text-sm text-muted-foreground font-medium">
               © {new Date().getFullYear()} What To Prompt. All rights reserved.
             </p>
-            <p className="text-[10px] sm:text-xs text-muted-foreground/60 tracking-widest uppercase">
 
-            </p>
           </div>
         </div>
       </div>
