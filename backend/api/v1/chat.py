@@ -1,40 +1,42 @@
 # backend/api/v1/chat.py
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from core.alchemy_engine import process_chat_request, refine_prompt_with_framework, audit_generated_prompt
+from core.limiter import limiter
 # UPDATED: Import all necessary models from the central models file
 from models.chat_models import ChatMessage, ChatRequest, ChatResponse, RefineRequest
 
 router = APIRouter()
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest):
+@limiter.limit("10/minute")
+async def chat_endpoint(request: Request, chat_request: ChatRequest):
     """
     Enhanced chat endpoint that receives user intent and returns a quality-scored expert prompt.
     """
     try:
         # Determine if this is a Wizard request (explicit fields) or legacy Chat request
-        if request.task or request.role or request.context or request.constraints:
+        if chat_request.task or chat_request.role or chat_request.context or chat_request.constraints:
             # Wizard Request: Pass as a dictionary
             engine_input = {
-                "role": request.role,
-                "task": request.task,
-                "context": request.context,
-                "constraints": request.constraints,
-                "tone": request.tone
+                "role": chat_request.role,
+                "task": chat_request.task,
+                "context": chat_request.context,
+                "constraints": chat_request.constraints,
+                "tone": chat_request.tone
             }
         else:
             # Legacy Chat Request: Convert list of dicts to ChatMessage objects
             engine_input = [
                 ChatMessage(role=msg["role"], content=msg["content"])
-                for msg in request.messages
+                for msg in chat_request.messages
             ]
         
         # Process the request using the multi-layered Prompt Alchemist engine.
         result = await process_chat_request(
             messages=engine_input,
-            model=request.target_model,
-            mode=request.mode
+            model=chat_request.target_model,
+            mode=chat_request.mode
         )
         
         # Return the final structured response. FastAPI automatically validates this
@@ -55,7 +57,8 @@ async def chat_endpoint(request: ChatRequest):
 
 
 @router.post("/refine", response_model=ChatResponse)
-async def refine_endpoint(request: RefineRequest):
+@limiter.limit("10/minute")
+async def refine_endpoint(request: Request, refine_request: RefineRequest):
     """
     Refines an existing prompt by injecting advanced optimization frameworks.
     Called when user clicks the 'Refine' button in the UI.
@@ -70,21 +73,21 @@ async def refine_endpoint(request: RefineRequest):
     try:
         # Call the refine function from alchemy_engine
         refined_prompt, explanation = await refine_prompt_with_framework(
-            original_prompt=request.original_prompt,
-            framework_suggestion=request.framework_suggestion,
-            model=request.target_model
+            original_prompt=refine_request.original_prompt,
+            framework_suggestion=refine_request.framework_suggestion,
+            model=refine_request.target_model
         )
         
         # Re-audit the refined prompt to show updated quality metrics
         quality_score = await audit_generated_prompt(
             expert_prompt=refined_prompt,
-            target_model=request.target_model,
-            task_category=request.task_category
+            target_model=refine_request.target_model,
+            task_category=refine_request.task_category
         )
         
         return ChatResponse(
             expert_prompt=refined_prompt,
-            explanation=f"✨ Refined with {request.framework_suggestion.split('(')[0].strip()}. {explanation}",
+            explanation=f"✨ Refined with {refine_request.framework_suggestion.split('(')[0].strip()}. {explanation}",
             quality_score=quality_score.model_dump() if quality_score else None
         )
         
