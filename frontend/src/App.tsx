@@ -13,6 +13,7 @@ import Templates from "./pages/Templates";
 import HistoryPage from "@/pages/HistoryPage";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -34,7 +35,14 @@ const App = () => (
           <Route path="/templates" element={<Templates />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/history" element={<HistoryPage />} />
+          <Route 
+            path="/history" 
+            element={
+              <ProtectedRoute>
+                <HistoryPage />
+              </ProtectedRoute>
+            } 
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

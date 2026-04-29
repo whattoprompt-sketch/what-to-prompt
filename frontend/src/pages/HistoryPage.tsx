@@ -36,12 +36,9 @@ const HistoryPage = () => {
 
     const checkUser = async () => {
         const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-            toast.error("Please sign in to view your history");
-            navigate("/auth");
-            return;
+        if (session) {
+            fetchSessions(session.user.id);
         }
-        fetchSessions(session.user.id);
     };
 
     const fetchSessions = async (userId: string) => {
