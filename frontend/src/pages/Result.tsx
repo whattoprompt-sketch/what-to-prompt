@@ -251,7 +251,7 @@ const Result = () => {
                     <Button
                       size="lg"
                       variant="outline"
-                      onClick={() => window.open('http://127.0.0.1:8000', '_blank')}
+                      onClick={() => window.open(apiUrl, '_blank')}
                       className="px-8 font-bold"
                     >
                       Check Backend Status
