@@ -95,6 +95,8 @@ const Result = () => {
     }
   }, [user, isSaved, fromHistory, safePromptData]);
 
+  const apiUrl = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
   // Function to fetch the enhanced prompt from backend
   const fetchExpertPrompt = useCallback(async () => {
     if (initialPrompt) return; // Don't fetch if we already have it (from history)
@@ -108,7 +110,6 @@ const Result = () => {
 
       console.log("🚀 [Frontend] Initiating API call to backend...");
 
-      const apiUrl = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
       const response = await fetch(`${apiUrl}/api/v1/chat`, {
         method: "POST",
         headers: {

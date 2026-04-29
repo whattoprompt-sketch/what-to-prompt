@@ -33,7 +33,7 @@ async def _call_groq(messages: List[ChatMessage], model: str = "llama3-70b-8192"
         response = await client.post(
             url,
             headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
-            json={"model": model, "messages": [msg.model_dump() for msg in messages]}
+            json={"model": model, "messages": [{"role": msg.role, "content": str(msg.content)} for msg in messages]}
         )
         response.raise_for_status()
         data = response.json()
@@ -57,10 +57,12 @@ async def _call_gemini(messages: List[ChatMessage], model: str = "gemini-1.5-fla
             
     payload = {"contents": gemini_messages}
     if system_instruction:
-        payload["systemInstruction"] = system_instruction
+        payload["system_instruction"] = system_instruction # Use system_instruction not systemInstruction
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(url, json=payload)
+        if response.status_code != 200:
+            logger.error(f"Gemini API Error: {response.text}")
         response.raise_for_status()
         data = response.json()
         return data["candidates"][0]["content"]["parts"][0]["text"]
@@ -74,7 +76,7 @@ async def _call_mistral(messages: List[ChatMessage], model: str = "mistral-large
         response = await client.post(
             url,
             headers={"Authorization": f"Bearer {MISTRAL_API_KEY}"},
-            json={"model": model, "messages": [msg.model_dump() for msg in messages]}
+            json={"model": model, "messages": [{"role": msg.role, "content": str(msg.content)} for msg in messages]}
         )
         response.raise_for_status()
         data = response.json()
@@ -84,7 +86,7 @@ async def _call_cohere(messages: List[ChatMessage], model: str = "command-r-plus
     """Calls Cohere API."""
     if not COHERE_API_KEY:
         raise Exception("COHERE_API_KEY missing")
-    url = "https://api.cohere.ai/v1/chat"
+    url = "https://api.cohere.com/v1/chat"
     
     # Convert messages to Cohere format
     chat_history = []
@@ -134,7 +136,7 @@ async def _call_openrouter(messages: List[ChatMessage], model: str) -> str:
                 "HTTP-Referer": YOUR_SITE_URL,
                 "X-Title": YOUR_APP_TITLE,
             },
-            json={"model": model, "messages": [msg.model_dump() for msg in messages]},
+            json={"model": model, "messages": [{"role": msg.role, "content": str(msg.content)} for msg in messages]},
         )
         response.raise_for_status()
         data = response.json()
@@ -147,7 +149,7 @@ async def call_ai_with_fallback(messages: List[ChatMessage], primary_model: str)
     """
     providers = [
         ("Groq", _call_groq, "llama3-70b-8192"),
-        ("Gemini", _call_gemini, "gemini-1.5-flash"),
+        ("Gemini", _call_gemini, "gemini-1.5-flash-latest"),
         ("Mistral", _call_mistral, "mistral-large-latest"),
         ("Cohere", _call_cohere, "command-r-plus"),
         ("OpenRouter", _call_openrouter, primary_model)
