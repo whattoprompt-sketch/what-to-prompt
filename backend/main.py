@@ -23,8 +23,21 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # --- Middleware ---
 # Load allowed origins from environment variable
-allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173")
-origins = [origin.strip() for origin in allowed_origins_str.split(",") if origin.strip()]
+default_origins = [
+    "http://localhost:5173",
+    "http://localhost:8080",
+    "https://chipper-bombolone-83adcd.netlify.app",
+    "https://whattoprompt.com",
+    "https://www.whattoprompt.com",
+    "https://what-to-prompt.onrender.com"
+]
+allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "")
+if allowed_origins_str:
+    origins = [origin.strip() for origin in allowed_origins_str.split(",") if origin.strip()]
+else:
+    origins = default_origins
+
+print(f"INFO: Loaded CORS origins: {origins}")
 
 app.add_middleware(
     CORSMiddleware,
