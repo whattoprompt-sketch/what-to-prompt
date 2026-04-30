@@ -1,5 +1,8 @@
 import zlib
+import logging
 from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 class VocabularyMapper:
     """
@@ -12,10 +15,19 @@ class VocabularyMapper:
         "teacher": ("Senior Pedagogy Strategist", "15+ years", "Scaffolded Learning & Cognitive Science"),
         "student": ("Academic Research Practitioner", "Post-Graduate Level", "Critical Analysis & Advanced Methodology"),
         "developer": ("Principal Software Architect", "12+ years", "Distributed Systems & Clean Architecture"),
+        "engineer": ("Principal Systems Engineer", "12+ years", "Technical Architecture & Systems Design"),
         "writer": ("Strategic Content Architect", "10+ years", "Narrative Design & Conversion Optimization"),
         "marketer": ("Growth Engineering Lead", "8+ years", "Behavioral Economics & Performance Marketing"),
+        "marketing": ("Senior Growth Marketing Strategist", "10+ years", "Brand Positioning & Demand Generation"),
+        "consultant": ("Senior Management Consultant", "12+ years", "Strategic Advisory & Business Transformation"),
         "salesman": ("Senior Luxury Brand Strategist", "12+ years", "High-Net-Worth Client Acquisition & AIDA Framework"),
+        "sales": ("Senior Revenue Growth Strategist", "10+ years", "Pipeline Optimization & Consultative Selling"),
         "manager": ("Strategic Operations Director", "20+ years", "Cross-Functional Leadership & Lean Six Sigma"),
+        "analyst": ("Principal Data & Strategy Analyst", "10+ years", "Quantitative Analysis & Business Intelligence"),
+        "designer": ("Senior UX/Product Design Lead", "10+ years", "Human-Centered Design & Design Systems"),
+        "scientist": ("Principal Research Scientist", "12+ years", "Applied Research & Experimental Methodology"),
+        "researcher": ("Senior Research Strategist", "10+ years", "Mixed-Methods Research & Insight Synthesis"),
+        "coach": ("Executive Performance Coach", "10+ years", "Behavioral Change & High-Performance Systems"),
         "expert": ("Distinguished Industry Authority", "15+ years", "Principal Domain Expertise")
     }
 
@@ -45,8 +57,12 @@ class VocabularyMapper:
         for key, data in cls.AUTHORITY_BLOCKS.items():
             if key in raw_l:
                 title, exp, niche = data
-                return f"{title} with {exp} experience in {niche}."
-        # FALLBACK: Use a generic high-level title, never the raw word
+                result = f"{title} with {exp} experience in {niche}."
+                logger.info(f"[VocabMapper] Role match: '{raw_role}' -> key='{key}' -> '{result}'")
+                return result
+        
+        # FALLBACK: No key matched — log what the raw input was so we can add it
+        logger.warning(f"[VocabMapper] No match for role: '{raw_role}' (normalized: '{raw_l}'). Using generic fallback.")
         return "Distinguished Principal Strategy Lead and Subject Matter Authority."
 
     @classmethod

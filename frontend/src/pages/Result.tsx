@@ -264,11 +264,14 @@ const Result = () => {
                   <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
                     <span className="inline-flex items-center gap-3 sm:flex-row flex-col">
                       <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12 text-primary" />
-                      Your Perfect Prompt is Ready!
+                      Your Expert Prompt is Ready!
                     </span>
                   </h1>
                   <p className="text-muted-foreground text-lg sm:text-xl font-medium max-w-2xl">
-                    Copy this and paste it into <span className="text-primary font-bold">{safePromptData.aiModel || "your AI tool"}</span> for incredible results.
+                    Copy this and paste it into <span className="text-primary font-bold">{safePromptData.aiModel || "your AI tool"}</span> — it will generate the content for you.
+                  </p>
+                  <p className="text-sm text-muted-foreground/70 max-w-2xl bg-muted/40 border border-border/50 rounded-xl px-4 py-2.5 inline-block">
+                    💡 This prompt instructs {safePromptData.aiModel || "the AI"} on exactly what to write. Paste it in and the AI will produce your final content.
                   </p>
                 </div>
               )}
