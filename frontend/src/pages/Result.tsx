@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 import Footer from "@/components/Footer";
@@ -57,6 +58,7 @@ interface ResultLocationState {
 const Result = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const {
     promptData,
     expertPrompt: initialPrompt,
@@ -168,19 +170,19 @@ const Result = () => {
       without: t('result.teaching.blocks.TASK.without'),
       modify: t('result.teaching.blocks.TASK.modify'),
     },
-    FORMAT: {
-      label: t('result.teaching.blocks.FORMAT.label'),
+    OUTPUT_STRUCTURE: {
+      label: t('result.teaching.blocks.OUTPUT_STRUCTURE.label'),
       icon: Layout,
       accent: "border-amber-500",
       accentText: "text-amber-600 dark:text-amber-400",
       accentBg: "bg-amber-50 dark:bg-amber-950/40",
-      technique: t('result.teaching.blocks.FORMAT.technique'),
-      techniqueDesc: t('result.teaching.blocks.FORMAT.techniqueDesc'),
-      why: t('result.teaching.blocks.FORMAT.why'),
-      before: t('result.teaching.blocks.FORMAT.before'),
-      after: t('result.teaching.blocks.FORMAT.after'),
-      without: t('result.teaching.blocks.FORMAT.without'),
-      modify: t('result.teaching.blocks.FORMAT.modify'),
+      technique: t('result.teaching.blocks.OUTPUT_STRUCTURE.technique'),
+      techniqueDesc: t('result.teaching.blocks.OUTPUT_STRUCTURE.techniqueDesc'),
+      why: t('result.teaching.blocks.OUTPUT_STRUCTURE.why'),
+      before: t('result.teaching.blocks.OUTPUT_STRUCTURE.before'),
+      after: t('result.teaching.blocks.OUTPUT_STRUCTURE.after'),
+      without: t('result.teaching.blocks.OUTPUT_STRUCTURE.without'),
+      modify: t('result.teaching.blocks.OUTPUT_STRUCTURE.modify'),
     },
     EXEMPLAR: {
       label: t('result.teaching.blocks.EXEMPLAR.label'),
