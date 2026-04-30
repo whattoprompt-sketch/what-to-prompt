@@ -24,16 +24,29 @@ MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY", "").strip()
 YOUR_SITE_URL = "https://whattoprompt.com"
 YOUR_APP_TITLE = "Prompt Alchemist"
 
+# Map user-friendly model names to OpenRouter slugs
+MODEL_MAPPING = {
+    "ChatGPT": "openai/gpt-4o-mini",
+    "Claude": "anthropic/claude-3.5-sonnet",
+    "Gemini": "google/gemini-flash-1.5",
+    "Mistral": "mistralai/mistral-large",
+    "Nous": "nousresearch/hermes-3-llama-3.1-405b",
+    "DeepSeek": "deepseek/deepseek-chat",
+    "Perplexity": "perplexity/llama-3.1-sonar-large-128k-online"
+}
+
 async def _call_groq(messages: List[ChatMessage], model: str = "llama3-70b-8192") -> str:
     """Calls Groq API. It uses OpenAI compatible format."""
     if not GROQ_API_KEY:
         raise Exception("GROQ_API_KEY missing")
     url = "https://api.groq.com/openai/v1/chat/completions"
     async with httpx.AsyncClient(timeout=30.0) as client:
+        payload = {"model": model, "messages": [{"role": msg.role, "content": str(msg.content)} for msg in messages]}
+        logger.info(f"Groq Request Payload: {payload}")
         response = await client.post(
             url,
             headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
-            json={"model": model, "messages": [{"role": msg.role, "content": str(msg.content)} for msg in messages]}
+            json=payload
         )
         response.raise_for_status()
         data = response.json()
@@ -43,7 +56,7 @@ async def _call_gemini(messages: List[ChatMessage], model: str = "gemini-1.5-fla
     """Calls Gemini REST API directly."""
     if not GEMINI_API_KEY:
         raise Exception("GEMINI_API_KEY missing")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1/models/{model}:generateContent?key={GEMINI_API_KEY}"
     
     # Convert messages to Gemini format
     gemini_messages = []
@@ -83,32 +96,18 @@ async def _call_mistral(messages: List[ChatMessage], model: str = "mistral-large
         return data["choices"][0]["message"]["content"]
 
 async def _call_cohere(messages: List[ChatMessage], model: str = "command-r-plus") -> str:
-    """Calls Cohere API."""
+    """Calls Cohere v2 API."""
     if not COHERE_API_KEY:
         raise Exception("COHERE_API_KEY missing")
-    url = "https://api.cohere.com/v1/chat"
+    url = "https://api.cohere.com/v2/chat"
     
-    # Convert messages to Cohere format
-    chat_history = []
-    system_message = None
-    message = ""
-    
-    for i, msg in enumerate(messages):
-        if msg.role == "system":
-            system_message = str(msg.content)
-        elif i == len(messages) - 1 and msg.role == "user":
-            message = str(msg.content)
-        else:
-            role = "USER" if msg.role == "user" else "CHATBOT"
-            chat_history.append({"role": role, "message": str(msg.content)})
+    # Convert messages to Cohere v2 format (OpenAI compatible)
+    cohere_messages = [{"role": msg.role, "content": str(msg.content)} for msg in messages]
             
     payload = {
         "model": model,
-        "message": message,
-        "chat_history": chat_history,
+        "messages": cohere_messages,
     }
-    if system_message:
-        payload["preamble"] = system_message
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
@@ -121,12 +120,16 @@ async def _call_cohere(messages: List[ChatMessage], model: str = "command-r-plus
         )
         response.raise_for_status()
         data = response.json()
-        return data["text"]
+        return data["message"]["content"][0]["text"]
 
 async def _call_openrouter(messages: List[ChatMessage], model: str) -> str:
     """Calls OpenRouter API as fallback."""
     if not OPENROUTER_API_KEY:
         raise Exception("OPENROUTER_API_KEY missing")
+    
+    # Resolve the model slug
+    openrouter_model = MODEL_MAPPING.get(model, model)
+    
     url = "https://openrouter.ai/api/v1/chat/completions"
     async with httpx.AsyncClient(timeout=60.0) as client:
         response = await client.post(
@@ -136,7 +139,7 @@ async def _call_openrouter(messages: List[ChatMessage], model: str) -> str:
                 "HTTP-Referer": YOUR_SITE_URL,
                 "X-Title": YOUR_APP_TITLE,
             },
-            json={"model": model, "messages": [{"role": msg.role, "content": str(msg.content)} for msg in messages]},
+            json={"model": openrouter_model, "messages": [{"role": msg.role, "content": str(msg.content)} for msg in messages]},
         )
         response.raise_for_status()
         data = response.json()
@@ -148,7 +151,7 @@ async def call_ai_with_fallback(messages: List[ChatMessage], primary_model: str)
     Returns (response_text, error_string_if_failed_completely)
     """
     providers = [
-        ("Groq", _call_groq, "llama3-70b-8192"),
+        ("Groq", _call_groq, "llama-3.1-70b-versatile"),
         ("Gemini", _call_gemini, "gemini-1.5-flash-latest"),
         ("Mistral", _call_mistral, "mistral-large-latest"),
         ("Cohere", _call_cohere, "command-r-plus"),
