@@ -10,6 +10,7 @@ interface PromptData {
   tone?: string;
   role?: string;
   requirements?: string;
+  outputFormat?: string;
 }
 
 interface PromptAnatomyProps {
@@ -55,6 +56,13 @@ const PromptAnatomy = ({ promptData, currentStep }: PromptAnatomyProps) => {
       description: t('promptAnatomy.specialInstructionsDesc'),
       value: (promptData.requirements ?? "") || (promptData.tone ?? ""),
       step: 5,
+    },
+    {
+      icon: Lightbulb,
+      title: t('promptAnatomy.outputFormat'),
+      description: t('promptAnatomy.outputFormatDesc'),
+      value: promptData.outputFormat ?? "",
+      step: 7,
     },
   ], [t, promptData]);
 

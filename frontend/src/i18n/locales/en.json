@@ -129,6 +129,12 @@
         "Creative copywriter specializing in emotional storytelling"
       ]
     },
+    "step7": {
+      "title": "How should the output be formatted?",
+      "subtitle": "Choosing a format shapes how the AI structures its response.",
+      "learnMoreTitle": "Which format should I choose?",
+      "learnMoreDesc": "Output format tells the AI how to structure its response. Bullet lists are great for quick scanning, numbered steps for processes, narrative for storytelling, and tables for comparisons. When in doubt, let the AI decide."
+    },
     "buttons": {
       "back": "Back",
       "continue": "Continue",
@@ -173,6 +179,8 @@
     "aiModelDesc": "Which AI model you're optimizing for",
     "specialInstructions": "Special Instructions",
     "specialInstructionsDesc": "Rules and requirements",
+    "outputFormat": "Output Format",
+    "outputFormatDesc": "How the response should be structured",
     "proTips": "Pro Tips",
     "tip1": "Use special instructions to shape precision",
     "tip2": "Be specific about tone and style",

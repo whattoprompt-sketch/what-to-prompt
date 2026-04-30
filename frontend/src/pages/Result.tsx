@@ -16,6 +16,7 @@ interface WizardInputs {
   requirements?: string;
   tone?: string;
   aiModel?: string;
+  outputFormat?: string;
 }
 
 interface ResultLocationState {
@@ -123,7 +124,8 @@ const Result = () => {
           task: safePromptData.task,
           context: safePromptData.context,
           constraints: safePromptData.requirements,
-          tone: safePromptData.tone
+          tone: safePromptData.tone,
+          output_format: safePromptData.outputFormat,
         }),
         signal: controller.signal
       });

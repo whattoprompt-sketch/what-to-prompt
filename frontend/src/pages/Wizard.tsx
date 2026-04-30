@@ -26,6 +26,7 @@ interface PromptData {
   tone: string;
   requirements: string;
   role: string;
+  outputFormat: string;
 }
 
 const Wizard = () => {
@@ -39,9 +40,10 @@ const Wizard = () => {
     tone: "",
     requirements: "",
     role: "",
+    outputFormat: "",
   });
 
-  const totalSteps = 6;
+  const totalSteps = 7;
 
   // Calculate progress accounting for skipped tone step
   const calculateProgress = () => {
@@ -158,6 +160,29 @@ const Wizard = () => {
       },
       learnMoreTrigger: t('wizard.step6.learnMoreTitle'),
       examples: t('wizard.step6.examples', { returnObjects: true }) as string[],
+    },
+    {
+      id: 7,
+      icon: Sparkles,
+      title: t('wizard.step7.title'),
+      subtitle: t('wizard.step7.subtitle'),
+      field: "outputFormat",
+      placeholder: "Select output format",
+      type: "select",
+      options: [
+        "Bullet list",
+        "Numbered steps",
+        "Narrative paragraphs",
+        "Table",
+        "Mixed (headers + bullets)",
+        "Let the AI decide",
+      ],
+      learnMore: {
+        title: t('wizard.step7.learnMoreTitle'),
+        description: t('wizard.step7.learnMoreDesc'),
+        examples: [],
+      },
+      learnMoreTrigger: t('wizard.step7.learnMoreTitle'),
     },
   ];
 

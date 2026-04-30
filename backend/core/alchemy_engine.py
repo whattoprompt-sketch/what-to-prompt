@@ -899,6 +899,11 @@ async def process_chat_request(
         if messages.get("tone"):
              components["constraints"] += f"\nTone: {messages.get('tone')}"
         
+        # Add output format to constraints if explicitly chosen
+        output_format = messages.get("output_format", "")
+        if output_format and output_format != "Let the AI decide":
+            components["constraints"] += f"\nRequired output format: {output_format}"
+        
         # Combine inputs to classify intent and generate the prompt
         combined_inputs = f"{components['role']} {components['task']} {components['context']} {components['constraints']}"
         task_category = classify_intent(combined_inputs)
@@ -970,6 +975,7 @@ THE FOLLOWING ARE THE AUTHORITATIVE STRATEGIC DIRECTIVES:
 **STRATEGIC_FRAMEWORK**: {method if method else "Standard Expert Protocol"}
 **TARGET_CONTEXT**: {components.get('context', 'Specialized Practitioners')}
 **OUTPUT_CONSTRAINTS**: {components.get('constraints', 'Production-grade fidelity')}
+**OUTPUT_FORMAT_DIRECTIVE**: {output_format if output_format and output_format != 'Let the AI decide' else 'Structure the output in the most appropriate format for the task.'}
 {framework_instruction}
 {contradiction_note}
 
