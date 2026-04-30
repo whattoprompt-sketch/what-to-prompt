@@ -48,6 +48,8 @@ class ChatRequest(BaseModel):
     tone: Optional[str] = None
     output_format: Optional[str] = None
     failed_attempts: Optional[str] = None
+    example_output: Optional[str] = None
+    reader_usage_context: Optional[str] = None
 
 class ChatResponse(BaseModel):
     """

@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, Target, BookOpen, Lightbulb, ArrowRight, ArrowLeft, CheckCircle2, SkipForward, ChevronLeft, ChevronRight } from "lucide-react";
+import { Sparkles, Target, BookOpen, Lightbulb, CheckCircle2, SkipForward, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import PromptAnatomy from "@/components/PromptAnatomy";
 import ExampleButton from "@/components/ExampleButton";
 import TooltipModal from "@/components/TooltipModal";
@@ -26,8 +26,13 @@ interface PromptData {
   tone: string;
   requirements: string;
   role: string;
-  outputFormat: string;
+}
+
+interface AdvancedData {
   failedAttempts: string;
+  outputFormat: string;
+  exampleOutput: string;
+  readerUsageContext: string;
 }
 
 const Wizard = () => {
@@ -41,11 +46,19 @@ const Wizard = () => {
     tone: "",
     requirements: "",
     role: "",
-    outputFormat: "",
-    failedAttempts: "",
   });
 
-  const totalSteps = 8;
+  const [advancedData, setAdvancedData] = useState<AdvancedData>({
+    failedAttempts: "",
+    outputFormat: "",
+    exampleOutput: "",
+    readerUsageContext: "",
+  });
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+
+  const totalSteps = 6;
+
+  const advancedFilledCount = Object.values(advancedData).filter(v => v.trim().length > 0).length;
 
   // Calculate progress accounting for skipped tone step
   const calculateProgress = () => {
@@ -163,45 +176,6 @@ const Wizard = () => {
       learnMoreTrigger: t('wizard.step6.learnMoreTitle'),
       examples: t('wizard.step6.examples', { returnObjects: true }) as string[],
     },
-    {
-      id: 7,
-      icon: Sparkles,
-      title: t('wizard.step7.title'),
-      subtitle: t('wizard.step7.subtitle'),
-      field: "outputFormat",
-      placeholder: "Select output format",
-      type: "select",
-      options: [
-        "Bullet list",
-        "Numbered steps",
-        "Narrative paragraphs",
-        "Table",
-        "Mixed (headers + bullets)",
-        "Let the AI decide",
-      ],
-      learnMore: {
-        title: t('wizard.step7.learnMoreTitle'),
-        description: t('wizard.step7.learnMoreDesc'),
-        examples: [],
-      },
-      learnMoreTrigger: t('wizard.step7.learnMoreTitle'),
-    },
-    {
-      id: 8,
-      icon: Lightbulb,
-      title: t('wizard.step8.title'),
-      subtitle: t('wizard.step8.subtitle'),
-      field: "failedAttempts",
-      placeholder: t('wizard.step8.placeholder'),
-      type: "textarea",
-      optional: true,
-      learnMore: {
-        title: t('wizard.step8.learnMoreTitle'),
-        description: t('wizard.step8.learnMoreDesc'),
-        examples: [],
-      },
-      learnMoreTrigger: t('wizard.step8.learnMoreTitle'),
-    },
   ];
 
   const currentStepData = steps[currentStep - 1];
@@ -211,7 +185,8 @@ const Wizard = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
-      navigate("/result", { state: { promptData } });
+      // Merge core + advanced data before navigating
+      navigate("/result", { state: { promptData: { ...promptData, ...advancedData } } });
     }
   };
 
@@ -370,6 +345,89 @@ const Wizard = () => {
                 </CardContent>
               </Card>
 
+              {/* Advanced Settings Panel */}
+              <div className="border border-border/50 rounded-2xl overflow-hidden transition-all">
+                <button
+                  onClick={() => setAdvancedOpen(!advancedOpen)}
+                  className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-muted/40 transition-colors text-left group"
+                  aria-expanded={advancedOpen}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Sparkles className="w-3.5 h-3.5 text-primary/60" />
+                    <span className="text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors">
+                      Advanced settings — get a more precise prompt
+                    </span>
+                    {advancedFilledCount > 0 && !advancedOpen && (
+                      <span className="text-xs bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full font-semibold">
+                        {advancedFilledCount} applied
+                      </span>
+                    )}
+                  </div>
+                  {advancedOpen
+                    ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
+                </button>
+
+                {advancedOpen && (
+                  <div className="px-5 pb-5 pt-2 space-y-5 border-t border-border/30 bg-muted/10">
+
+                    {/* 1. What's failed before — highest value, first */}
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-semibold">What's failed before?</label>
+                      <p className="text-xs text-muted-foreground">We'll turn every failure into a hard prohibition in the generated prompt.</p>
+                      <Textarea
+                        value={advancedData.failedAttempts}
+                        onChange={(e) => setAdvancedData({ ...advancedData, failedAttempts: e.target.value })}
+                        placeholder="e.g., It gave me corporate jargon. The output was too generic. It listed features instead of benefits."
+                        className="min-h-[68px] text-sm resize-none border-border/60 focus:border-primary"
+                      />
+                    </div>
+
+                    {/* 2. Output format */}
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-semibold">Output format</label>
+                      <Select
+                        value={advancedData.outputFormat}
+                        onValueChange={(v) => setAdvancedData({ ...advancedData, outputFormat: v })}
+                      >
+                        <SelectTrigger className="text-sm h-10 border-border/60 focus:border-primary">
+                          <SelectValue placeholder="How should the response be structured?" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {["Bullet list", "Numbered steps", "Narrative paragraphs", "Table", "Mixed (headers + bullets)", "Let the AI decide"].map(opt => (
+                            <SelectItem key={opt} value={opt} className="text-sm">{opt}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 3. Example of good output */}
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-semibold">Show an example of good output</label>
+                      <p className="text-xs text-muted-foreground">Even a rough sketch — the AI will match this style and extend it.</p>
+                      <Textarea
+                        value={advancedData.exampleOutput}
+                        onChange={(e) => setAdvancedData({ ...advancedData, exampleOutput: e.target.value })}
+                        placeholder="e.g., Something like: '3 bullets, each starting with an action verb. Like: Build your network before you need it.'"
+                        className="min-h-[68px] text-sm resize-none border-border/60 focus:border-primary"
+                      />
+                    </div>
+
+                    {/* 4. Who reads it and what do they do with it */}
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-semibold">Who reads this and what do they do with it?</label>
+                      <Input
+                        value={advancedData.readerUsageContext}
+                        onChange={(e) => setAdvancedData({ ...advancedData, readerUsageContext: e.target.value })}
+                        placeholder="e.g., My CEO — she'll use it in a board presentation. Or: I'll paste it directly into a client email."
+                        className="text-sm h-10 border-border/60 focus:border-primary"
+                      />
+                    </div>
+
+                  </div>
+                )}
+              </div>
+
               {/* Navigation Buttons */}
               <div className="flex items-center justify-between gap-2 sm:gap-4 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border/50">
                 {currentStep > 1 ? (
@@ -401,7 +459,7 @@ const Wizard = () => {
 
             {/* Sidebar */}
             <div className="hidden lg:block lg:sticky lg:top-8 h-fit">
-              <PromptAnatomy promptData={promptData} currentStep={currentStep} />
+              <PromptAnatomy promptData={{ ...promptData, ...advancedData }} currentStep={currentStep} />
             </div>
           </div>
         </div>

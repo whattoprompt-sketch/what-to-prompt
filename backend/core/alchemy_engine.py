@@ -926,6 +926,12 @@ async def process_chat_request(
         # Extract failed attempts for negative space injection
         failed_attempts = messages.get("failed_attempts", "").strip()
         
+        # Extract user-provided example (overrides category exemplar for few-shot)
+        example_output = messages.get("example_output", "").strip()
+        
+        # Extract reader + usage context for tone/completeness calibration
+        reader_usage_context = messages.get("reader_usage_context", "").strip()
+        
         # Combine inputs to classify intent and generate the prompt
         combined_inputs = f"{components['role']} {components['task']} {components['context']} {components['constraints']}"
         task_category = classify_intent(combined_inputs)
@@ -987,13 +993,13 @@ Add a "CONSTRAINTS" section explaining: "CRITICAL OVERRIDE: Professional tone ma
              forbidden_words_list = [w.lower().strip() for w in forbidden_words_list if w and len(w.strip()) > 2]
              forbidden_display = ", ".join(f"'{w}'" for w in forbidden_words_list)
              
-             # Get domain exemplar for few-shot injection
-             exemplar = get_domain_exemplar(task_category)
+             # Get domain exemplar — user-provided overrides category default
+             category_exemplar = get_domain_exemplar(task_category)
+             active_exemplar = example_output if example_output else category_exemplar
              exemplar_block = (
-                 f"\n**FEW_SHOT_EXEMPLAR** — This shows what a HIGH-QUALITY final response looks like. "
-                 f"Your generated prompt must instruct the AI to produce output matching this format and quality level:\n{exemplar}"
-             ) if exemplar else ""
-             
+                 f"\n**FEW_SHOT_EXEMPLAR** — {'User-provided example. Match this style exactly, then extend it with 1-2 more lines.' if example_output else 'Category-level example showing target quality and format.'}\n{active_exemplar}"
+             ) if active_exemplar else ""
+
              # Build previous failures block — feeds directly into ### DO NOT
              previous_failures_block = (
                  f"\n**PREVIOUS_FAILURES** — The user tried AI for this task before and got bad results. "
@@ -1002,6 +1008,14 @@ Add a "CONSTRAINTS" section explaining: "CRITICAL OVERRIDE: Professional tone ma
              failures_do_not_note = (
                  "Translate every PREVIOUS_FAILURES item into a direct prohibition. "
              ) if failed_attempts else ""
+
+             # Build reader + usage context block
+             reader_usage_block = (
+                 f"\n**READER_USAGE_CONTEXT**: {reader_usage_context}\n"
+                 f"Calibrate the generated prompt's tone, completeness, and formality to match this context. "
+                 f"If copy-paste or direct use is implied: instruct the AI to produce zero placeholders. "
+                 f"If a specific reader type is mentioned: match their structural and register expectations."
+             ) if reader_usage_context else ""
              
              user_content = f"""
 ### PRODUCTION_PARAMETERS
@@ -1016,6 +1030,7 @@ THE FOLLOWING ARE THE AUTHORITATIVE STRATEGIC DIRECTIVES:
 **OUTPUT_FORMAT_DIRECTIVE**: {output_format if output_format and output_format != 'Let the AI decide' else 'Structure the output in the most appropriate format for the task.'}
 {exemplar_block}
 {previous_failures_block}
+{reader_usage_block}
 {framework_instruction}
 {contradiction_note}
 
