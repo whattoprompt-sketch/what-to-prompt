@@ -7,6 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Select,
   SelectContent,
@@ -14,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, Target, BookOpen, Lightbulb, CheckCircle2, SkipForward, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
+import { Sparkles, Target, BookOpen, Lightbulb, CheckCircle2, SkipForward, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, RefreshCw, Layout, Globe } from "lucide-react";
 import PromptAnatomy from "@/components/PromptAnatomy";
 import ExampleButton from "@/components/ExampleButton";
 import TooltipModal from "@/components/TooltipModal";
@@ -346,87 +352,110 @@ const Wizard = () => {
               </Card>
 
               {/* Advanced Settings Panel */}
-              <div className="border border-border/50 rounded-2xl overflow-hidden transition-all">
-                <button
-                  onClick={() => setAdvancedOpen(!advancedOpen)}
-                  className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-muted/40 transition-colors text-left group"
-                  aria-expanded={advancedOpen}
+              <div className="pt-6 border-t border-border/60">
+            <Collapsible
+              open={advancedOpen}
+              onOpenChange={setAdvancedOpen}
+              className="w-full space-y-4"
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="w-full flex items-center justify-between py-6 px-4 h-auto hover:bg-muted/50 rounded-xl transition-all"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <Sparkles className="w-3.5 h-3.5 text-primary/60" />
-                    <span className="text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors">
-                      Advanced settings — get a more precise prompt
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${advancedOpen ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'}`}>
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <span className="font-bold text-base sm:text-lg tracking-tight">
+                      {t('wizard.advanced.trigger')}
                     </span>
-                    {advancedFilledCount > 0 && !advancedOpen && (
-                      <span className="text-xs bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full font-semibold">
-                        {advancedFilledCount} applied
+                    {advancedFilledCount > 0 && (
+                      <span className="bg-primary text-primary-foreground text-[10px] uppercase font-black px-2 py-0.5 rounded-full animate-in zoom-in duration-300">
+                        {t('wizard.advanced.applied', { count: advancedFilledCount })}
                       </span>
                     )}
                   </div>
-                  {advancedOpen
-                    ? <ChevronUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                    : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
-                </button>
-
-                {advancedOpen && (
-                  <div className="px-5 pb-5 pt-2 space-y-5 border-t border-border/30 bg-muted/10">
-
-                    {/* 1. What's failed before — highest value, first */}
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold">What's failed before?</label>
-                      <p className="text-xs text-muted-foreground">We'll turn every failure into a hard prohibition in the generated prompt.</p>
-                      <Textarea
-                        value={advancedData.failedAttempts}
-                        onChange={(e) => setAdvancedData({ ...advancedData, failedAttempts: e.target.value })}
-                        placeholder="e.g., It gave me corporate jargon. The output was too generic. It listed features instead of benefits."
-                        className="min-h-[68px] text-sm resize-none border-border/60 focus:border-primary"
-                      />
-                    </div>
-
-                    {/* 2. Output format */}
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold">Output format</label>
-                      <Select
-                        value={advancedData.outputFormat}
-                        onValueChange={(v) => setAdvancedData({ ...advancedData, outputFormat: v })}
-                      >
-                        <SelectTrigger className="text-sm h-10 border-border/60 focus:border-primary">
-                          <SelectValue placeholder="How should the response be structured?" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["Bullet list", "Numbered steps", "Narrative paragraphs", "Table", "Mixed (headers + bullets)", "Let the AI decide"].map(opt => (
-                            <SelectItem key={opt} value={opt} className="text-sm">{opt}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* 3. Example of good output */}
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold">Show an example of good output</label>
-                      <p className="text-xs text-muted-foreground">Even a rough sketch — the AI will match this style and extend it.</p>
-                      <Textarea
-                        value={advancedData.exampleOutput}
-                        onChange={(e) => setAdvancedData({ ...advancedData, exampleOutput: e.target.value })}
-                        placeholder="e.g., Something like: '3 bullets, each starting with an action verb. Like: Build your network before you need it.'"
-                        className="min-h-[68px] text-sm resize-none border-border/60 focus:border-primary"
-                      />
-                    </div>
-
-                    {/* 4. Who reads it and what do they do with it */}
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold">Who reads this and what do they do with it?</label>
-                      <Input
-                        value={advancedData.readerUsageContext}
-                        onChange={(e) => setAdvancedData({ ...advancedData, readerUsageContext: e.target.value })}
-                        placeholder="e.g., My CEO — she'll use it in a board presentation. Or: I'll paste it directly into a client email."
-                        className="text-sm h-10 border-border/60 focus:border-primary"
-                      />
-                    </div>
-
+                  {advancedOpen ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-6 pt-2 pb-6 px-4 animate-in slide-in-from-top-2 duration-300">
+                {/* Field: What's failed before */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="failedAttempts" className="text-sm font-bold flex items-center gap-2">
+                      <RefreshCw className="w-3.5 h-3.5 text-primary" />
+                      {t('wizard.advanced.fields.failed.label')}
+                    </Label>
                   </div>
-                )}
-              </div>
+                  <p className="text-[11px] text-muted-foreground leading-tight">
+                    {t('wizard.advanced.fields.failed.desc')}
+                  </p>
+                  <Textarea
+                    id="failedAttempts"
+                    placeholder={t('wizard.advanced.fields.failed.placeholder')}
+                    value={advancedData.failedAttempts}
+                    onChange={(e) => setAdvancedData({ ...advancedData, failedAttempts: e.target.value })}
+                    className="min-h-[80px] bg-background/50 border-border/60 focus:border-primary/50 transition-all text-sm rounded-xl"
+                  />
+                </div>
+
+                {/* Field: Output Format */}
+                <div className="space-y-2">
+                  <Label htmlFor="outputFormat" className="text-sm font-bold flex items-center gap-2">
+                    <Layout className="w-3.5 h-3.5 text-primary" />
+                    {t('wizard.advanced.fields.format.label')}
+                  </Label>
+                  <Select value={advancedData.outputFormat} onValueChange={(v) => setAdvancedData({ ...advancedData, outputFormat: v })}>
+                    <SelectTrigger id="outputFormat" className="w-full bg-background/50 border-border/60 rounded-xl">
+                      <SelectValue placeholder={t('wizard.advanced.fields.format.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Bullet list">Bullet list</SelectItem>
+                      <SelectItem value="Numbered steps">Numbered steps</SelectItem>
+                      <SelectItem value="Narrative paragraphs">Narrative paragraphs</SelectItem>
+                      <SelectItem value="Table">Table</SelectItem>
+                      <SelectItem value="Mixed structure">Mixed structure</SelectItem>
+                      <SelectItem value="Let the AI decide">Let the AI decide</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Field: One example of good output */}
+                <div className="space-y-2">
+                  <Label htmlFor="exampleOutput" className="text-sm font-bold flex items-center gap-2">
+                    <BookOpen className="w-3.5 h-3.5 text-primary" />
+                    {t('wizard.advanced.fields.example.label')}
+                  </Label>
+                  <p className="text-[11px] text-muted-foreground leading-tight">
+                    {t('wizard.advanced.fields.example.desc')}
+                  </p>
+                  <Textarea
+                    id="exampleOutput"
+                    placeholder={t('wizard.advanced.fields.example.placeholder')}
+                    value={advancedData.exampleOutput}
+                    onChange={(e) => setAdvancedData({ ...advancedData, exampleOutput: e.target.value })}
+                    className="min-h-[80px] bg-background/50 border-border/60 focus:border-primary/50 transition-all text-sm rounded-xl"
+                  />
+                </div>
+
+                {/* Field: Who reads this and what do they do with it? */}
+                <div className="space-y-2">
+                  <Label htmlFor="readerUsageContext" className="text-sm font-bold flex items-center gap-2">
+                    <Globe className="w-3.5 h-3.5 text-primary" />
+                    {t('wizard.advanced.fields.reader.label')}
+                  </Label>
+                  <Input
+                    id="readerUsageContext"
+                    placeholder={t('wizard.advanced.fields.reader.placeholder')}
+                    value={advancedData.readerUsageContext}
+                    onChange={(e) => setAdvancedData({ ...advancedData, readerUsageContext: e.target.value })}
+                    className="bg-background/50 border-border/60 focus:border-primary/50 transition-all text-sm rounded-xl h-11"
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
 
               {/* Navigation Buttons */}
               <div className="flex items-center justify-between gap-2 sm:gap-4 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border/50">

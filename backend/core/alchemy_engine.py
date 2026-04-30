@@ -1051,7 +1051,7 @@ Add a "CONSTRAINTS" section explaining: "CRITICAL OVERRIDE: Professional tone ma
              # Build previous failures block — feeds directly into ### DO NOT
              previous_failures_block = (
                  f"\n**PREVIOUS_FAILURES** — The user tried AI for this task before and got bad results. "
-                 f"Each item below MUST become a specific prohibition in the ### DO NOT section of your prompt:\n{failed_attempts}"
+                 f"You MUST negate every item below. Each failure item MUST be converted into a specific, non-negotiable prohibition in the ### [CONSTRAINT] section (Soft constraints sub-block) of your prompt:\n{failed_attempts}"
              ) if failed_attempts else ""
              failures_do_not_note = (
                  "Translate every PREVIOUS_FAILURES item into a direct prohibition. "
