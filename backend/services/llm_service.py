@@ -27,27 +27,29 @@ YOUR_APP_TITLE = "Prompt Alchemist"
 # Map user-friendly model names to OpenRouter slugs
 MODEL_MAPPING = {
     "ChatGPT": "openai/gpt-4o-mini",
-    "Claude": "anthropic/claude-3.5-sonnet",
-    "Gemini": "google/gemini-flash-1.5",
-    "Mistral": "mistralai/mistral-large",
-    "Nous": "nousresearch/hermes-3-llama-3.1-405b",
-    "DeepSeek": "deepseek/deepseek-chat",
-    "Perplexity": "perplexity/llama-3.1-sonar-large-128k-online"
+    "Claude": "anthropic/claude-3-haiku",
+    "Gemini": "google/gemini-2.0-flash-001",
+    "Mistral": "mistralai/mistral-small",
+    "Nous": "nousresearch/hermes-3-llama-3.1-70b",
+    "DeepSeek": "deepseek/deepseek-chat-v3-0324:free",
+    "Perplexity": "perplexity/sonar"
 }
 
-async def _call_groq(messages: List[ChatMessage], model: str = "llama3-70b-8192") -> str:
+async def _call_groq(messages: List[ChatMessage], model: str = "llama-3.3-70b-versatile") -> str:
     """Calls Groq API. It uses OpenAI compatible format."""
     if not GROQ_API_KEY:
         raise Exception("GROQ_API_KEY missing")
     url = "https://api.groq.com/openai/v1/chat/completions"
     async with httpx.AsyncClient(timeout=30.0) as client:
         payload = {"model": model, "messages": [{"role": msg.role, "content": str(msg.content)} for msg in messages]}
-        logger.info(f"Groq Request Payload: {payload}")
+        logger.info(f"[Groq] Sending payload: model={model}, message_count={len(messages)}")
         response = await client.post(
             url,
             headers={"Authorization": f"Bearer {GROQ_API_KEY}"},
             json=payload
         )
+        if response.status_code != 200:
+            logger.error(f"[Groq] Error {response.status_code}: {response.text}")
         response.raise_for_status()
         data = response.json()
         return data["choices"][0]["message"]["content"]
@@ -70,7 +72,7 @@ async def _call_gemini(messages: List[ChatMessage], model: str = "gemini-1.5-fla
             
     payload = {"contents": gemini_messages}
     if system_instruction:
-        payload["system_instruction"] = system_instruction # Use system_instruction not systemInstruction
+        payload["systemInstruction"] = system_instruction  # Correct camelCase per Google REST API spec
 
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(url, json=payload)
@@ -118,6 +120,8 @@ async def _call_cohere(messages: List[ChatMessage], model: str = "command-r-plus
             },
             json=payload
         )
+        if response.status_code != 200:
+            logger.error(f"[Cohere] Error {response.status_code}: {response.text}")
         response.raise_for_status()
         data = response.json()
         return data["message"]["content"][0]["text"]
@@ -151,8 +155,8 @@ async def call_ai_with_fallback(messages: List[ChatMessage], primary_model: str)
     Returns (response_text, error_string_if_failed_completely)
     """
     providers = [
-        ("Groq", _call_groq, "llama-3.1-70b-versatile"),
-        ("Gemini", _call_gemini, "gemini-1.5-flash-latest"),
+        ("Groq", _call_groq, "llama-3.3-70b-versatile"),
+        ("Gemini", _call_gemini, "gemini-1.5-flash"),  # stable model ID for v1 endpoint
         ("Mistral", _call_mistral, "mistral-large-latest"),
         ("Cohere", _call_cohere, "command-r-plus"),
         ("OpenRouter", _call_openrouter, primary_model)
