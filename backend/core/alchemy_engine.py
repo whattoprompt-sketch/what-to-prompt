@@ -288,40 +288,55 @@ Make them specific to this domain and task — not generic:
 {category_instructions}
 
 ### MANDATORY OUTPUT STRUCTURE — 6-BLOCK ARCHITECTURE
-Your generated prompt MUST follow this exact structure, in this order, with these exact section headers.
+Your generated prompt MUST follow this exact structure, in this order, with these exact block headers and internal sub-structure.
 Do NOT merge blocks. Do NOT add sections between them. Do NOT skip any block.
 
 ---
 ### [IDENTITY]
-You are a [elevated title with experience] — [operational context clause: specific environment + stakes].
+You are [precisely calibrated role with specific expertise markers, experience level, and niche specialization].
+Your communication style is [specific style attributes that match the task domain and audience register].
+You have direct experience with [relevant domain specifics that make this expertise credible and non-generic].
 
 ---
 ### [CONTEXT]
-[Background the AI needs: who the audience is, what situation this is for, any relevant constraints on the world this operates in.]
+The situation: [user's context enriched with implications — what's at stake, what environment this operates in]
+The audience for your output: [who reads the final content and what they specifically need from it]
+This output will be used for: [downstream use case — copy-paste, board presentation, client email, first draft, etc.]
 
 ---
 ### [TASK]
-First, [specific action]. Then, [specific action]. Finally, [specific action].
+Your primary objective: [main task stated with precision — no vague verbs]
+Step 1: [first subtask with explicit reasoning instruction — what to analyze, identify, or gather first]
+Step 2: [second subtask that builds on Step 1 — what to structure, map, or draft using Step 1's output]
+Step 3: [final synthesis step — what to produce, refine, or verify to complete the objective]
 
 ---
 ### [FORMAT]
-[Exact sections the response must contain, their order, approximate length per section, and what each must include or exclude.]
+Structure your response exactly as follows:
+[Section 1 name]: [what it contains, approximate max length]
+[Section 2 name]: [what it contains, approximate max length]
+Do not include: [explicitly excluded elements — specific, not generic]
 
 ---
-### [EXAMPLE OUTPUT]
-[2-4 lines of what a correct, high-quality response looks like. Use [PLACEHOLDERS] sparingly for variable content only.]
+### [EXEMPLAR]
+Here is an example of the quality and style I want:
+[2-4 lines showing what a correct, high-quality response looks like — concrete, domain-specific]
 
 ---
-### [DO NOT]
-- Do not [specific domain-relevant prohibition]
-- Do not [specific domain-relevant prohibition]
-- Do not [specific domain-relevant prohibition]
+### [CONSTRAINT]
+Hard constraints (non-negotiable):
+- [measurable constraint with specific number, word count, or grade level]
+- [measurable constraint — format, structure, or inclusion rule]
+Soft constraints (strong preferences):
+- [style preference or register guidance specific to this domain]
+- [what to avoid — domain-specific prohibition, not generic advice]
 
 ---
 
 ### OUTPUT RULES
 - Start immediately with "### Prompt" — no preamble, no explanation
-- Use the exact block headers above: `### [IDENTITY]`, `### [CONTEXT]`, `### [TASK]`, `### [FORMAT]`, `### [EXAMPLE OUTPUT]`, `### [DO NOT]`
+- Use the exact block headers: `### [IDENTITY]`, `### [CONTEXT]`, `### [TASK]`, `### [FORMAT]`, `### [EXEMPLAR]`, `### [CONSTRAINT]`
+- Preserve the internal sub-structure of each block exactly as shown in the template above
 - Target length: 350–500 words across all 6 blocks combined
 - This is the ready-to-paste prompt itself. Not a document about what the prompt should contain.
 """
@@ -1095,12 +1110,45 @@ Construct a GOLD-TIER, READY-TO-PASTE prompt using ONLY the terms in PRODUCTION_
 
 YOUR OUTPUT MUST USE THIS EXACT 6-BLOCK STRUCTURE — any missing block is a FAILURE:
 
-### [IDENTITY] — "You are a [EXPERT_IDENTITY]." Add the operational context clause.
-### [CONTEXT] — Background, audience, situation. Draw from TARGET_CONTEXT.
-### [TASK] — Decompose using "First... Then... Finally...". Each step is a direct instruction.
-### [FORMAT] — Exact sections, their order, approximate word count, what to include/exclude. Apply OUTPUT_FORMAT_DIRECTIVE.
-### [EXAMPLE OUTPUT] — 2-4 lines of a correct, high-quality response. {f'Base this on the USER_PROVIDED_EXEMPLAR and extend it.' if example_output else 'Match the quality of FEW_SHOT_EXEMPLAR.'} THIS BLOCK IS MANDATORY.
-### [DO NOT] — 3-5 domain-specific prohibitions. {failures_do_not_note}THIS BLOCK IS MANDATORY.
+### [IDENTITY]
+3 lines required:
+  Line 1: "You are [role with expertise markers, experience level, niche]."
+  Line 2: "Your communication style is [specific style attributes]."
+  Line 3: "You have direct experience with [domain specifics from EXPERT_IDENTITY and TARGET_CONTEXT]."
+
+### [CONTEXT]
+3 labeled lines required:
+  "The situation: [context enriched with implications from TARGET_CONTEXT]"
+  "The audience for your output: [who reads it — from TARGET_CONTEXT or READER_USAGE_CONTEXT]"
+  "This output will be used for: [downstream use case — from READER_USAGE_CONTEXT if provided, else infer]"
+
+### [TASK]
+Required structure:
+  "Your primary objective: [precise task from MISSION_CRITICAL_TASK]"
+  "Step 1: [what to analyze/identify — explicit reasoning instruction]"
+  "Step 2: [what to structure/draft — builds on Step 1]"
+  "Step 3: [what to synthesize/finalize — completes the objective]"
+
+### [FORMAT]
+Required structure:
+  "Structure your response exactly as follows:"
+  "[Section name]: [contents, max length]" (repeat for each section)
+  "Do not include: [excluded elements]"
+  Apply OUTPUT_FORMAT_DIRECTIVE to determine section names and lengths.
+
+### [EXEMPLAR]
+Required structure:
+  "Here is an example of the quality and style I want:"
+  [content] — {f'Use USER_PROVIDED_EXEMPLAR verbatim, then extend with 1-2 more lines in the same voice.' if example_output else 'Draw from FEW_SHOT_EXEMPLAR. Match its quality and format.'}
+  THIS BLOCK IS MANDATORY.
+
+### [CONSTRAINT]
+Required structure:
+  "Hard constraints (non-negotiable):"
+  "- [measurable constraint with number/grade/word count]" (2-3 bullets)
+  "Soft constraints (strong preferences):"
+  "- [domain-specific style preference]" (1-2 bullets, drawn from PREVIOUS_FAILURES if provided)
+  {failures_do_not_note}THIS BLOCK IS MANDATORY.
 
 START your response directly with "### Prompt"
 """
