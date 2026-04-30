@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Copy, RefreshCw, Lightbulb, CheckCircle2, Sparkles, ExternalLink } from "lucide-react";
+import { Copy, RefreshCw, Lightbulb, CheckCircle2, Sparkles, ExternalLink, ChevronDown, ChevronUp, User, Globe, Target, Layout, BookOpen, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import PromptAnatomy from "@/components/PromptAnatomy";
 
@@ -52,6 +52,95 @@ const Result = () => {
   const [loading, setLoading] = useState(!initialPrompt);
   const [error, setError] = useState("");
   const [isSaved, setIsSaved] = useState(!!fromHistory);
+  const [expandedBlocks, setExpandedBlocks] = useState<Record<string, boolean>>({});
+
+  const toggleBlock = (blockKey: string) => {
+    setExpandedBlocks(prev => ({ ...prev, [blockKey]: !prev[blockKey] }));
+  };
+
+  // Parse the generated prompt into its 6 named blocks
+  const BLOCK_KEYS = ["IDENTITY", "CONTEXT", "TASK", "FORMAT", "EXEMPLAR", "CONSTRAINT"] as const;
+  type BlockKey = typeof BLOCK_KEYS[number];
+
+  const parsePromptBlocks = (text: string): Record<BlockKey, string> | null => {
+    const result = {} as Record<BlockKey, string>;
+    let found = 0;
+    for (let i = 0; i < BLOCK_KEYS.length; i++) {
+      const key = BLOCK_KEYS[i];
+      const header = `### [${key}]`;
+      const start = text.indexOf(header);
+      if (start === -1) continue;
+      const contentStart = start + header.length;
+      // Find where next block starts, or end of string
+      const nextHeaders = BLOCK_KEYS.slice(i + 1).map(k => `### [${k}]`);
+      let end = text.length;
+      for (const nh of nextHeaders) {
+        const pos = text.indexOf(nh, contentStart);
+        if (pos !== -1 && pos < end) end = pos;
+      }
+      result[key] = text.slice(contentStart, end).trim();
+      found++;
+    }
+    return found >= 4 ? result : null; // need at least 4 blocks to show annotated view
+  };
+
+  const BLOCK_META: Record<BlockKey, {
+    label: string;
+    icon: React.ElementType;
+    accent: string;
+    accentText: string;
+    accentBg: string;
+    why: string;
+  }> = {
+    IDENTITY: {
+      label: "Identity",
+      icon: User,
+      accent: "border-violet-500",
+      accentText: "text-violet-600 dark:text-violet-400",
+      accentBg: "bg-violet-50 dark:bg-violet-950/40",
+      why: "Most tools give the AI a generic role. This block goes further — it specifies expertise markers, communication style, and direct domain experience. These three elements together create a cognitive frame that primes the model to respond from a specific, high-stakes professional perspective. The difference between 'helpful assistant' and a precisely calibrated expert is often the single biggest quality delta in any generated output.",
+    },
+    CONTEXT: {
+      label: "Context",
+      icon: Globe,
+      accent: "border-blue-500",
+      accentText: "text-blue-600 dark:text-blue-400",
+      accentBg: "bg-blue-50 dark:bg-blue-950/40",
+      why: "Context isn't just background — it's the situation, the specific reader, and what they'll do with the output. By separating these three, the model understands not just what to write, but who will read it and how they'll use it. This prevents the model from writing 'for everyone', which ends up working for no one. Specifying downstream use (copy-paste vs. first draft vs. presentation) alone can eliminate an entire class of output failures.",
+    },
+    TASK: {
+      label: "Task",
+      icon: Target,
+      accent: "border-emerald-500",
+      accentText: "text-emerald-600 dark:text-emerald-400",
+      accentBg: "bg-emerald-50 dark:bg-emerald-950/40",
+      why: "Step-by-step decomposition is Chain-of-Thought prompting applied at the instruction level. Instead of 'write a product description', the model is guided through the reasoning process: analyze first, structure second, synthesize third. This produces outputs that are logically sequenced and internally coherent — not a wall of text generated in one unguided pass. Each step builds on the last, mimicking how a human expert would actually approach the task.",
+    },
+    FORMAT: {
+      label: "Format",
+      icon: Layout,
+      accent: "border-amber-500",
+      accentText: "text-amber-600 dark:text-amber-400",
+      accentBg: "bg-amber-50 dark:bg-amber-950/40",
+      why: "Ambiguity in format is the single most common cause of unusable AI output. By specifying exact section names, approximate lengths, and explicitly excluded elements, this block eliminates all interpretation. The model produces the output structure you need — not the one it defaults to. 'Structure your response exactly as follows' is one of the highest-signal phrases in prompt engineering: it tells the model this is a constraint, not a suggestion.",
+    },
+    EXEMPLAR: {
+      label: "Exemplar",
+      icon: BookOpen,
+      accent: "border-rose-500",
+      accentText: "text-rose-600 dark:text-rose-400",
+      accentBg: "bg-rose-50 dark:bg-rose-950/40",
+      why: "Few-shot prompting — showing the model an example before asking for output — is one of the most reliably effective techniques in prompt engineering. The model reverse-engineers the style, register, quality, and implicit rules from the example and applies them. A single well-chosen example can transform output quality more than any combination of written instructions, because the model learns by demonstration, not just description.",
+    },
+    CONSTRAINT: {
+      label: "Constraint",
+      icon: ShieldCheck,
+      accent: "border-slate-500",
+      accentText: "text-slate-600 dark:text-slate-400",
+      accentBg: "bg-slate-50 dark:bg-slate-950/40",
+      why: "Separating Hard from Soft constraints is a professional prompt engineering technique most tools skip entirely. Hard constraints are non-negotiable rules the output must follow — word counts, format requirements, mandatory inclusions. Soft constraints are strong preferences that shape style and register. This split tells the model exactly where there's flexibility and where there isn't, preventing it from trading off the wrong things when the prompt is complex.",
+    },
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -322,14 +411,73 @@ const Result = () => {
                 )}
               </div>
 
-              {/* Prompt Display */}
-              <Card className="border-2 shadow-card">
-                <CardContent className="pt-6 pb-6">
-                  <pre className="text-sm font-mono whitespace-pre-wrap bg-muted/50 p-6 rounded-lg overflow-x-auto border-2 border-dashed">
-                    {prompt}
-                  </pre>
-                </CardContent>
-              </Card>
+              {/* Prompt Display — Annotated 6-Block Breakdown */}
+              {(() => {
+                const blocks = parsePromptBlocks(prompt);
+                if (!blocks) {
+                  // Fallback: raw display if prompt doesn't have the expected structure
+                  return (
+                    <Card className="border-2 shadow-card">
+                      <CardContent className="pt-6 pb-6">
+                        <pre className="text-sm font-mono whitespace-pre-wrap bg-muted/50 p-6 rounded-lg overflow-x-auto border-2 border-dashed">
+                          {prompt}
+                        </pre>
+                      </CardContent>
+                    </Card>
+                  );
+                }
+                return (
+                  <div className="space-y-3">
+                    {BLOCK_KEYS.map((key) => {
+                      const content = blocks[key];
+                      if (!content) return null;
+                      const meta = BLOCK_META[key];
+                      const Icon = meta.icon;
+                      const isExpanded = expandedBlocks[key] ?? false;
+                      return (
+                        <div key={key} className={`rounded-xl border-l-4 ${meta.accent} border border-border/60 overflow-hidden`}>
+                          {/* Block header */}
+                          <div className={`px-5 py-3 flex items-center gap-3 ${meta.accentBg}`}>
+                            <Icon className={`w-4 h-4 flex-shrink-0 ${meta.accentText}`} />
+                            <span className={`text-xs font-bold tracking-widest uppercase ${meta.accentText}`}>
+                              {meta.label}
+                            </span>
+                          </div>
+                          {/* Block content */}
+                          <div className="px-5 py-4 bg-card">
+                            <pre className="text-sm font-mono whitespace-pre-wrap leading-relaxed text-foreground/90">
+                              {content}
+                            </pre>
+                          </div>
+                          {/* Why this works toggle */}
+                          <div className="border-t border-border/40">
+                            <button
+                              onClick={() => toggleBlock(key)}
+                              className="w-full flex items-center justify-between px-5 py-2.5 hover:bg-muted/40 transition-colors text-left group"
+                              aria-expanded={isExpanded}
+                            >
+                              <div className="flex items-center gap-2">
+                                <Lightbulb className={`w-3.5 h-3.5 ${meta.accentText}`} />
+                                <span className={`text-xs font-semibold ${meta.accentText} group-hover:underline`}>
+                                  Why this works
+                                </span>
+                              </div>
+                              {isExpanded
+                                ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                                : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
+                            </button>
+                            {isExpanded && (
+                              <div className={`px-5 pb-4 pt-1 text-sm text-muted-foreground leading-relaxed border-t border-border/30 ${meta.accentBg}`}>
+                                {meta.why}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
               {/* Secondary Actions */}
               <div className="flex flex-wrap gap-3 justify-center">
