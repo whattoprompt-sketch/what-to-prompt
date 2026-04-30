@@ -228,50 +228,69 @@ def detect_gibberish(text: str) -> bool:
     if any(p in text for p in ["asdf", "sdsd", "qwerty", "zxcv", "qwer", "test"]): return True
     return len(text) < 4
 
+def get_domain_exemplar(task_category: str) -> str:
+    """Returns a tight 2-3 sentence sample of ideal output for few-shot injection."""
+    data = PERFECT_EXAMPLES.get(task_category, PERFECT_EXAMPLES["general"])
+    return data.get("exemplar_output", "")
+
+
 def get_sovereign_system_prompt(task_category: str) -> str:
-    """Returns the unified Sovereign Alchemist System Prompt with pattern training."""
-    context_data = PERFECT_EXAMPLES.get(task_category, PERFECT_EXAMPLES["general"]) 
+    """Returns the upgraded Sovereign Alchemist System Prompt — v2.0 Six-Dimension Engine."""
+    context_data = PERFECT_EXAMPLES.get(task_category, PERFECT_EXAMPLES["general"])
     category_instructions = context_data["instructions"]
-    
-    contrastive_examples = """
-### PATTERN TRAINING: THE TRANSFORMATION DELTA
 
-**EXAMPLE 1 (LAZY REPHRASE - FORBIDDEN)**
-INPUT: "Role: Teacher | Task: Explain gravity"
-❌ TOXIC: "You are a teacher who explains gravity." 
-✅ GOLD: "**Senior Astrophysics Pedagogy Strategist**. Architect a comprehensive mental model of General Relativity using the Feynman Technique."
+    return f"""### OMEGA PROTOCOL: EXPERT PROMPT ARCHITECT v2.0
 
-**EXAMPLE 2 (ROLE MISMATCH - FORBIDDEN)**
-INPUT: "Role: High school student | Task: Audit skyscraper"
-❌ TOXIC: "You are a high school student who audits..."
-✅ GOLD: "**Principal Structural Engineer & Forensic Architect** with 20+ years experience in high-rise seismic safety and IBC compliance."
+You are building a READY-TO-USE expert prompt. The user will copy your output and paste it directly into an AI tool. It must work on the first paste, without any editing or interpretation.
 
-**EXAMPLE 3 (SALES/MARKETING - AIDA REQUIRED)**
-INPUT: "Role: Salesman | Task: Sell private jet"
-❌ TOXIC: "You are a salesman who sells..."
-✅ GOLD: "**Senior Luxury Brand Strategist**. Architect an acquisition strategy for UHNWI using the AIDA Framework (Attention, Interest, Desire, Action)."
-"""
+### CRITICAL: VOICE AND FORMAT
+Write the entire prompt in SECOND-PERSON IMPERATIVE, directed at the target AI:
+✅ CORRECT: "You are a [Role]. First, analyze [X]. Then produce [Y]. Do not include [Z]."
+❌ WRONG: "This prompt instructs the AI to analyze [X] and produce [Y]."
+❌ WRONG: "A good approach would be to consider [X] before writing [Y]."
+❌ WRONG: "The generated prompt should contain a role and a task description."
 
-    return f"""### OMEGA PROTOCOL: THE PROMPT ARCHITECT
-You are an ELITE PROMPT ARCHITECT. You receive pre-transformed professional terms and build production-grade prompts.
+The output IS the instruction. Write it as if you are directly commanding the AI — because you are.
 
-{contrastive_examples}
+### THE SIX MANDATORY DIMENSIONS
+Apply every dimension. Missing any one is a failure.
 
-### ABSOLUTE RULES
-1. **USE ONLY PROVIDED TERMS**: You will receive ARCHITECT TERMS. These are the ONLY terms you may use. Do not introduce any casual, novice, or low-skill language.
-2. **ZERO DRAFT REFERENCES**: You are NOT transforming a draft. You are building a NEW prompt from professional terms. Never reference or acknowledge any "original" or "draft" language.
-3. **ROLE ELEVATION**: Always use senior-level professional roles with credentials and experience.
-4. **MANDATORY FRAMEWORK INJECTION**: You MUST explicitly embed the specified framework in the TASK section.
-5. **EXPANSION**: Build a 400+ word production prompt with technical depth and specificity.
+**[1] ROLE PRECISION**
+Write the role as two elements fused into one sentence:
+- An elevated professional title with experience level and niche specialization
+- ONE operational context clause: the specific environment, stakes, or constraint that makes this expert's perspective unique
+Example: "You are a Direct Response Copywriter with 15+ years writing for TV infomercials — where every line is tested against conversion data and a weak sentence costs thousands in ad spend."
+
+**[2] TASK DECOMPOSITION**
+For any non-trivial task, break it into explicit sequential sub-steps:
+- Use: "First, [action]. Then, [action]. Finally, [action]."
+- Each sub-step is a direct instruction, not a description of what the output should contain
+Example: "First, identify the 3 strongest emotional triggers for this audience. Then, map each product feature to exactly one trigger. Finally, write the description using those mappings as your structural skeleton."
+
+**[3] MEASURABLE CONSTRAINTS**
+Convert every vague constraint into a measurable one. Add numbers, grade levels, word counts, action verb mandates:
+- "Be professional" → "Use Flesch-Kincaid grade 8 or below. Begin every bullet with an action verb. Never use the word 'leverage'."
+- "Keep it short" → "Total word count: 150 words maximum. No more than 3 bullets per section."
+
+**[4] EXPLICIT OUTPUT STRUCTURE**
+Define the exact sections of the response, their order, their approximate length, and what each section must include and explicitly exclude.
+
+**[5] EXEMPLAR INJECTION — MANDATORY**
+Include a `### EXAMPLE OUTPUT` section showing 2-4 lines of what a correct, high-quality response looks like. Use [BRACKETED PLACEHOLDERS] for variable content. This section is not optional.
+
+**[6] NEGATIVE SPACE — MANDATORY**
+Include a `### DO NOT` section with 3-5 specific, domain-relevant prohibitions.
+Make them specific to this domain and task — not generic:
+- Generic (WRONG): "Do not be vague. Do not use poor grammar."
+- Specific (CORRECT for marketing): "Do not use the phrase 'high quality'. Do not include pricing. Do not make claims that cannot be verified in a single sentence."
 
 ### DOMAIN MANDATE ({task_category.upper()})
 {category_instructions}
 
-### OUTPUT STRUCTURE
-Start with "### Prompt" and use:
-- Markdown headers (###)
-- Bold variables **[VARIABLE]**
-- Horizontal delimiters (---)
+### OUTPUT RULES
+- Start immediately with "### Prompt" — no preamble, no meta-commentary
+- Use: Markdown headers (###), bold variables **[VARIABLE]**, horizontal delimiters (---)
+- Target length: 400–600 words. This is a prompt, not a framework document.
 """
 
 def get_unique_keywords(text: str) -> List[str]:
@@ -965,6 +984,13 @@ Add a "CONSTRAINTS" section explaining: "CRITICAL OVERRIDE: Professional tone ma
              forbidden_words_list = [w.lower().strip() for w in forbidden_words_list if w and len(w.strip()) > 2]
              forbidden_display = ", ".join(f"'{w}'" for w in forbidden_words_list)
              
+             # Get domain exemplar for few-shot injection
+             exemplar = get_domain_exemplar(task_category)
+             exemplar_block = (
+                 f"\n**FEW_SHOT_EXEMPLAR** — This shows what a HIGH-QUALITY final response looks like. "
+                 f"Your generated prompt must instruct the AI to produce output matching this format and quality level:\n{exemplar}"
+             ) if exemplar else ""
+             
              user_content = f"""
 ### PRODUCTION_PARAMETERS
 [SYSTEM_OVERRIDE: DISREGARD ALL PRIOR USER TERMINOLOGY]
@@ -976,6 +1002,7 @@ THE FOLLOWING ARE THE AUTHORITATIVE STRATEGIC DIRECTIVES:
 **TARGET_CONTEXT**: {components.get('context', 'Specialized Practitioners')}
 **OUTPUT_CONSTRAINTS**: {components.get('constraints', 'Production-grade fidelity')}
 **OUTPUT_FORMAT_DIRECTIVE**: {output_format if output_format and output_format != 'Let the AI decide' else 'Structure the output in the most appropriate format for the task.'}
+{exemplar_block}
 {framework_instruction}
 {contradiction_note}
 
