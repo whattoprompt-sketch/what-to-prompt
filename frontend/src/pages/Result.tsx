@@ -36,7 +36,7 @@ const Result = () => {
   } = (location.state as ResultLocationState) || {};
 
   // Safe access to promptData properties to avoid runtime errors if state is missing
-  const safePromptData: WizardInputs = promptData ?? {};
+  const safePromptData: WizardInputs = useMemo(() => promptData ?? {}, [promptData]);
 
   const [showCelebration, setShowCelebration] = useState(!fromHistory);
   const [copied, setCopied] = useState(false);
@@ -153,7 +153,7 @@ const Result = () => {
       setLoading(false);
       clearTimeout(timeoutId);
     }
-  }, [initialPrompt, safePromptData]);
+  }, [initialPrompt, safePromptData, apiUrl]);
 
   const [hasStartedFetch, setHasStartedFetch] = useState(false);
 
@@ -299,7 +299,10 @@ const Result = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    onClick={() => window.open(aiUrls[safePromptData.aiModel], '_blank')}
+                    onClick={() => {
+                      const url = safePromptData.aiModel ? aiUrls[safePromptData.aiModel] : undefined;
+                      if (url) window.open(url, '_blank');
+                    }}
                     className="font-bold h-auto py-4 sm:py-6 text-lg sm:text-2xl shadow-lg border-2 border-primary/20 hover:border-primary hover:bg-primary/5 active:scale-95 transition-all flex-1 rounded-xl sm:rounded-2xl shrink-0 animate-in slide-in-from-left-2 fade-in duration-300"
                   >
                     Open in {safePromptData.aiModel}
