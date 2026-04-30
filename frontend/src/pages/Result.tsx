@@ -90,7 +90,11 @@ const Result = () => {
     accent: string;
     accentText: string;
     accentBg: string;
+    technique: string;
+    techniqueDesc: string;
     why: string;
+    without: string;
+    modify: string;
   }> = {
     IDENTITY: {
       label: "Identity",
@@ -98,7 +102,11 @@ const Result = () => {
       accent: "border-violet-500",
       accentText: "text-violet-600 dark:text-violet-400",
       accentBg: "bg-violet-50 dark:bg-violet-950/40",
-      why: "Most tools give the AI a generic role. This block goes further — it specifies expertise markers, communication style, and direct domain experience. These three elements together create a cognitive frame that primes the model to respond from a specific, high-stakes professional perspective. The difference between 'helpful assistant' and a precisely calibrated expert is often the single biggest quality delta in any generated output.",
+      technique: "Role Priming",
+      techniqueDesc: "We specified a precise expert role with expertise markers, communication style, and operational context — not just a job title. This activates the model's training data associated with expert-level outputs in this specific domain.",
+      why: "LLMs are trained on vast amounts of text written by real people. 'Senior marketing consultant' triggers a broad, average distribution. 'Direct response copywriter who has written for infomercials where every word is tested against conversion data' signals a very specific corpus — high-stakes persuasion writing. The model literally draws from different patterns. The operational context clause (the 'where every word costs money' part) is often more powerful than the title itself.",
+      without: "Without role priming, the model defaults to its 'helpful assistant' persona — generically competent, deliberately cautious, optimized to avoid offending the statistically average user. You'll get polished mediocrity: correct sentences, weak decisions. The role block is the single highest-leverage change you can make to any prompt.",
+      modify: "Try changing the operational context clause — the part that describes the environment and stakes. Swap 'infomercials where every word costs money' for 'academic journals where peer review is the only metric that matters.' The content will shift completely while the task stays identical. That's role priming in action. Specificity in the stakes clause is more powerful than specificity in the title.",
     },
     CONTEXT: {
       label: "Context",
@@ -106,7 +114,11 @@ const Result = () => {
       accent: "border-blue-500",
       accentText: "text-blue-600 dark:text-blue-400",
       accentBg: "bg-blue-50 dark:bg-blue-950/40",
-      why: "Context isn't just background — it's the situation, the specific reader, and what they'll do with the output. By separating these three, the model understands not just what to write, but who will read it and how they'll use it. This prevents the model from writing 'for everyone', which ends up working for no one. Specifying downstream use (copy-paste vs. first draft vs. presentation) alone can eliminate an entire class of output failures.",
+      technique: "Situation Grounding + Downstream Awareness",
+      techniqueDesc: "This block gives the model the complete situational triangle: what's happening, who reads the output, and what they do with it. These three together prevent the model from filling context gaps with its own statistical assumptions.",
+      why: "Without explicit context, the model writes for its internal 'most likely user' — a statistical average across all similar requests in training. Specifying audience, situation, and downstream use triangulates the target precisely. The 'This output will be used for' line is particularly powerful: it changes expected length, formality level, completeness requirements, and whether the model uses placeholders or writes fully.",
+      without: "The model makes confident assumptions about your audience and use case — and those assumptions are always generic. For a product description, it assumes a general consumer. For an email, it assumes a corporate context. These defaults are optimized to be broadly acceptable, which means they're specifically wrong for most actual situations.",
+      modify: "The highest-leverage modification is 'The audience for your output.' Change it from 'small business owners' to 'Series A investors' and the vocabulary, depth, and framing shift completely — same task, completely different output. The 'used for' field is your second lever: 'copy-paste directly' forces the model to produce complete, placeholder-free content, while 'first draft' gives it permission to be rougher but broader.",
     },
     TASK: {
       label: "Task",
@@ -114,7 +126,11 @@ const Result = () => {
       accent: "border-emerald-500",
       accentText: "text-emerald-600 dark:text-emerald-400",
       accentBg: "bg-emerald-50 dark:bg-emerald-950/40",
-      why: "Step-by-step decomposition is Chain-of-Thought prompting applied at the instruction level. Instead of 'write a product description', the model is guided through the reasoning process: analyze first, structure second, synthesize third. This produces outputs that are logically sequenced and internally coherent — not a wall of text generated in one unguided pass. Each step builds on the last, mimicking how a human expert would actually approach the task.",
+      technique: "Chain-of-Thought Decomposition",
+      techniqueDesc: "Instead of a single instruction, the task is broken into sequential reasoning steps. Each step builds on the previous one, forcing the model to approach the problem in a structured way rather than generating output in one unguided pass.",
+      why: "LLMs generate text token by token. When Step 1 instructs the model to identify emotional triggers before writing, the output of that analysis literally influences the token probabilities for everything that follows. This is chain-of-thought prompting applied at the instruction level. It mimics how a human expert actually works: research first, structure second, write third. Without it, the model collapses all sub-tasks into a single statistical prediction.",
+      without: "Without decomposition, the model produces output in a single pass — which means it's simultaneously deciding what to say, how to structure it, and what words to use, all at once. Human experts never work this way. The result is output that sounds fluent but lacks strategic structure. Features get mentioned without being mapped to benefits. Conclusions appear before the reasoning that supports them.",
+      modify: "The highest-leverage modification is changing what Step 1 asks the model to identify before writing. 'Identify the 3 strongest emotional triggers for this audience' and 'Identify the 3 most unique features of this product' produce structurally different outputs even with identical Step 2 and Step 3 instructions. Step 1 is the frame — everything else gets built inside it. Change the frame, change the output.",
     },
     FORMAT: {
       label: "Format",
@@ -122,7 +138,11 @@ const Result = () => {
       accent: "border-amber-500",
       accentText: "text-amber-600 dark:text-amber-400",
       accentBg: "bg-amber-50 dark:bg-amber-950/40",
-      why: "Ambiguity in format is the single most common cause of unusable AI output. By specifying exact section names, approximate lengths, and explicitly excluded elements, this block eliminates all interpretation. The model produces the output structure you need — not the one it defaults to. 'Structure your response exactly as follows' is one of the highest-signal phrases in prompt engineering: it tells the model this is a constraint, not a suggestion.",
+      technique: "Output Constraint Specification",
+      techniqueDesc: "Exact section names, approximate lengths per section, and explicitly excluded elements eliminate all format interpretation. The phrase 'Structure your response exactly as follows' is one of the highest-signal instructions in prompt engineering — it tells the model this is a hard constraint, not a suggestion.",
+      why: "Without format specification, the model generates the output structure it considers most 'typical' for the task — a statistical mode across similar outputs in its training data. Named sections with maximum lengths give the model hard boundaries it respects similarly to system-level constraints. The model also learns implicit rules: if you name a section 'Hook,' it understands that section needs to perform a specific rhetorical function.",
+      without: "You get whatever format the model considers a typical example of the task — usually 2-3 paragraphs of flowing text with no structure. Even when the content is excellent, you can't control whether you get bullets or paragraphs, whether there's a headline, how long each section runs, or whether the model adds an unsolicited 'In conclusion' paragraph. Format chaos is the most common cause of outputs that need heavy editing.",
+      modify: "'Do not include' is the single most underused lever in format specification. Most prompt engineers focus on what to include — the model's defaults already handle inclusions reasonably well. What it gets wrong are inclusions you don't want: pricing disclaimers, meta-commentary about the task, call-to-action boilerplate. Adding specific exclusions often improves output quality more than adding inclusions.",
     },
     EXEMPLAR: {
       label: "Exemplar",
@@ -130,7 +150,11 @@ const Result = () => {
       accent: "border-rose-500",
       accentText: "text-rose-600 dark:text-rose-400",
       accentBg: "bg-rose-50 dark:bg-rose-950/40",
-      why: "Few-shot prompting — showing the model an example before asking for output — is one of the most reliably effective techniques in prompt engineering. The model reverse-engineers the style, register, quality, and implicit rules from the example and applies them. A single well-chosen example can transform output quality more than any combination of written instructions, because the model learns by demonstration, not just description.",
+      technique: "Few-Shot Prompting",
+      techniqueDesc: "Showing the model an example of target output quality before asking it to produce the output. The model reverse-engineers the style, register, and implicit quality standards from the example and applies them — learning by demonstration rather than description.",
+      why: "LLMs learn by pattern matching at a deep level. When you provide an example, the model identifies stylistic patterns, vocabulary register, structural choices, sentence length norms, and implicit quality thresholds — then applies all of them simultaneously. This is more effective than describing these properties in words because the model is pattern-matching against something concrete rather than inferring an abstract target from description. One well-chosen example can override pages of stylistic instructions.",
+      without: "Without an exemplar, the model interprets your written instructions at the level of their literal meaning — which is always less precise than you intend. 'Professional tone' means something different to the model than to you. 'Three concise bullet points' produces wildly varying bullet lengths. 'Engaging opening' triggers whatever the statistical average of engaging openings looks like in training data. An example anchors all of these ambiguities simultaneously.",
+      modify: "The most powerful modification is swapping the exemplar style while keeping the task constant. Replace the current example with something in a completely different register — informal/punchy vs. formal/executive, data-dense vs. narrative, short vs. long-form. The entire output character shifts while following the same task instructions. This makes the exemplar the most direct style control you have — more direct than any adjective in a written instruction.",
     },
     CONSTRAINT: {
       label: "Constraint",
@@ -138,7 +162,11 @@ const Result = () => {
       accent: "border-slate-500",
       accentText: "text-slate-600 dark:text-slate-400",
       accentBg: "bg-slate-50 dark:bg-slate-950/40",
-      why: "Separating Hard from Soft constraints is a professional prompt engineering technique most tools skip entirely. Hard constraints are non-negotiable rules the output must follow — word counts, format requirements, mandatory inclusions. Soft constraints are strong preferences that shape style and register. This split tells the model exactly where there's flexibility and where there isn't, preventing it from trading off the wrong things when the prompt is complex.",
+      technique: "Hard/Soft Constraint Differentiation",
+      techniqueDesc: "Constraints are split into non-negotiable rules (Hard) and strong preferences (Soft). This tells the model exactly where it has flexibility and where it doesn't — creating an explicit priority ordering it can use when the prompt is complex or the constraints are in tension.",
+      why: "Without this separation, the model weights all instructions equally — which means it may compromise on a critical word count requirement to satisfy a style preference. Hard constraints signal inviolability the same way 'MUST' and 'NEVER' do in natural language. Soft constraints give the model permission to be contextually flexible. In long prompts with many requirements, this split is what prevents the model from making the wrong trade-offs.",
+      without: "The model treats all instructions as equally weighted preferences. In a complex prompt, it picks and chooses what to honor based on its own weighting — which rarely matches yours. It may prioritize sounding professional over staying under 150 words. It may include a call-to-action because training data suggests that's 'good copywriting,' even when you've asked for no CTA. You lose control over which constraints are inviolable.",
+      modify: "Move constraints between Hard and Soft to change the model's priority ordering. If the output keeps running too long, move 'maximum word count' from Soft to Hard — the model will sacrifice other elements to comply. If a style element is being over-constrained (the output feels mechanical), move it from Hard to Soft, giving the model flexibility to interpret it contextually. The position of a constraint often matters more than its wording.",
     },
   };
 
@@ -449,7 +477,7 @@ const Result = () => {
                               {content}
                             </pre>
                           </div>
-                          {/* Why this works toggle */}
+                          {/* Teaching panel toggle */}
                           <div className="border-t border-border/40">
                             <button
                               onClick={() => toggleBlock(key)}
@@ -459,7 +487,7 @@ const Result = () => {
                               <div className="flex items-center gap-2">
                                 <Lightbulb className={`w-3.5 h-3.5 ${meta.accentText}`} />
                                 <span className={`text-xs font-semibold ${meta.accentText} group-hover:underline`}>
-                                  Why this works
+                                  Learn the technique
                                 </span>
                               </div>
                               {isExpanded
@@ -467,8 +495,28 @@ const Result = () => {
                                 : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
                             </button>
                             {isExpanded && (
-                              <div className={`px-5 pb-4 pt-1 text-sm text-muted-foreground leading-relaxed border-t border-border/30 ${meta.accentBg}`}>
-                                {meta.why}
+                              <div className={`border-t border-border/30 ${meta.accentBg}`}>
+                                {/* Technique */}
+                                <div className="px-5 pt-4 pb-3 space-y-1.5">
+                                  <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">Technique</p>
+                                  <p className={`text-sm font-bold ${meta.accentText}`}>💡 {meta.technique}</p>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">{meta.techniqueDesc}</p>
+                                </div>
+                                {/* Why it works */}
+                                <div className="px-5 py-3 space-y-1.5 border-t border-border/20">
+                                  <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">Why it works</p>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">{meta.why}</p>
+                                </div>
+                                {/* Without this */}
+                                <div className="px-5 py-3 space-y-1.5 border-t border-border/20 bg-destructive/5">
+                                  <p className="text-[10px] font-bold tracking-widest uppercase text-destructive/60">Without this</p>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">{meta.without}</p>
+                                </div>
+                                {/* How to modify */}
+                                <div className="px-5 pt-3 pb-4 space-y-1.5 border-t border-border/20">
+                                  <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">How to modify it</p>
+                                  <p className="text-sm text-muted-foreground leading-relaxed">{meta.modify}</p>
+                                </div>
                               </div>
                             )}
                           </div>
