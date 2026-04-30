@@ -287,10 +287,43 @@ Make them specific to this domain and task — not generic:
 ### DOMAIN MANDATE ({task_category.upper()})
 {category_instructions}
 
+### MANDATORY OUTPUT STRUCTURE — 6-BLOCK ARCHITECTURE
+Your generated prompt MUST follow this exact structure, in this order, with these exact section headers.
+Do NOT merge blocks. Do NOT add sections between them. Do NOT skip any block.
+
+---
+### [IDENTITY]
+You are a [elevated title with experience] — [operational context clause: specific environment + stakes].
+
+---
+### [CONTEXT]
+[Background the AI needs: who the audience is, what situation this is for, any relevant constraints on the world this operates in.]
+
+---
+### [TASK]
+First, [specific action]. Then, [specific action]. Finally, [specific action].
+
+---
+### [FORMAT]
+[Exact sections the response must contain, their order, approximate length per section, and what each must include or exclude.]
+
+---
+### [EXAMPLE OUTPUT]
+[2-4 lines of what a correct, high-quality response looks like. Use [PLACEHOLDERS] sparingly for variable content only.]
+
+---
+### [DO NOT]
+- Do not [specific domain-relevant prohibition]
+- Do not [specific domain-relevant prohibition]
+- Do not [specific domain-relevant prohibition]
+
+---
+
 ### OUTPUT RULES
-- Start immediately with "### Prompt" — no preamble, no meta-commentary
-- Use: Markdown headers (###), bold variables **[VARIABLE]**, horizontal delimiters (---)
-- Target length: 400–600 words. This is a prompt, not a framework document.
+- Start immediately with "### Prompt" — no preamble, no explanation
+- Use the exact block headers above: `### [IDENTITY]`, `### [CONTEXT]`, `### [TASK]`, `### [FORMAT]`, `### [EXAMPLE OUTPUT]`, `### [DO NOT]`
+- Target length: 350–500 words across all 6 blocks combined
+- This is the ready-to-paste prompt itself. Not a document about what the prompt should contain.
 """
 
 def get_unique_keywords(text: str) -> List[str]:
@@ -1060,13 +1093,14 @@ Construct a GOLD-TIER, READY-TO-PASTE prompt using ONLY the terms in PRODUCTION_
 - Write in SECOND-PERSON IMPERATIVE directed at the target AI ("You are...", "First,...")
 - DO NOT reference any "original request" or "draft". FORBIDDEN words: {forbidden_display}
 
-YOUR OUTPUT MUST CONTAIN ALL FIVE OF THESE SECTIONS — missing any is a FAILURE:
+YOUR OUTPUT MUST USE THIS EXACT 6-BLOCK STRUCTURE — any missing block is a FAILURE:
 
-[1] ROLE — Start with "You are a [EXPERT_IDENTITY]." Include the operational context clause.
-[2] TASK — Decompose using "First, [action]. Then, [action]. Finally, [action]."
-[3] OUTPUT STRUCTURE — Define the exact sections, their order, and approximate word count each.
-[4] ### EXAMPLE OUTPUT — 2-4 lines showing what a correct, high-quality response looks like. THIS IS MANDATORY IN THE FINAL PROMPT.
-[5] ### DO NOT — 3-5 specific, domain-relevant prohibitions specific to this task. {failures_do_not_note}THIS IS MANDATORY IN THE FINAL PROMPT.
+### [IDENTITY] — "You are a [EXPERT_IDENTITY]." Add the operational context clause.
+### [CONTEXT] — Background, audience, situation. Draw from TARGET_CONTEXT.
+### [TASK] — Decompose using "First... Then... Finally...". Each step is a direct instruction.
+### [FORMAT] — Exact sections, their order, approximate word count, what to include/exclude. Apply OUTPUT_FORMAT_DIRECTIVE.
+### [EXAMPLE OUTPUT] — 2-4 lines of a correct, high-quality response. {f'Base this on the USER_PROVIDED_EXEMPLAR and extend it.' if example_output else 'Match the quality of FEW_SHOT_EXEMPLAR.'} THIS BLOCK IS MANDATORY.
+### [DO NOT] — 3-5 domain-specific prohibitions. {failures_do_not_note}THIS BLOCK IS MANDATORY.
 
 START your response directly with "### Prompt"
 """
