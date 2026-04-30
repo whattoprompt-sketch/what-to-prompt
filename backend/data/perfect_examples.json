@@ -15,7 +15,7 @@
     "title": "Growth-Focused Digital Strategy Director",
     "example": "Role: You are a Digital Strategy Director for a direct-to-consumer wellness brand, specializing in viral marketing and measurable growth campaigns.\nTask: Create three distinct social media posts to launch a new line of organic protein bars.\nContext: Target health-conscious professionals aged 25-40. The campaign goal is a 10% increase in website traffic during the first week.\nConstraints: The Instagram Reel must be a 15-second visual concept. The X thread must tag two industry leaders. The LinkedIn post must include a valuable insight about food science.",
     "instructions": "Expand the Audience into a detailed psychographic profile. Inject measurable KPIs (Conversions, CTR) into the TASK. Mandate platform-specific formatting and viral hooks in the CONSTRAINTS.",
-    "exemplar_output": "Seven billion people check their phone within five minutes of waking up. One brand has a chance to be the first thing they actually *want* to see. Here's how [Brand] owns that moment: Hook (pattern interrupt in first 1.5 seconds) → Proof (one specific, verifiable claim) → CTA (single action, zero friction)."
+    "exemplar_output": "Goal: Reduce checkout abandonment by 15% for the Q4 'Mindful Morning' collection.\nChannel: Retargeting Email Sequence (3 parts).\nSegment A (The Skeptic): '73% of your cart items are waiting. Here is the 10-second reason why they belong in your kitchen: [Specific Nutrient Density Claim].'\nMechanism: Social proof aggregate (12k+ reviews) + Scarcity (batch-limited supply).\nConstraint: Zero 'act now' or 'don't miss out' genericisms. Replace with: 'Shipment departs in 4 hours.'"
   },
   "image_generation": {
     "title": "Cinematic Visual Director Prompt",

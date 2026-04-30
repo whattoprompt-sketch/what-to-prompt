@@ -5,7 +5,7 @@ import type { User } from "@supabase/supabase-js";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Copy, RefreshCw, Lightbulb, CheckCircle2, Sparkles, ExternalLink, ChevronDown, ChevronUp, User, Globe, Target, Layout, BookOpen, ShieldCheck } from "lucide-react";
+import { Copy, RefreshCw, Lightbulb, CheckCircle2, Sparkles, ExternalLink, ChevronDown, ChevronUp, User, Globe, Target, Layout, BookOpen, ShieldCheck, ThumbsUp, ThumbsDown, MessageSquareShare } from "lucide-react";
 import { toast } from "sonner";
 import PromptAnatomy from "@/components/PromptAnatomy";
 
@@ -22,10 +22,35 @@ interface WizardInputs {
   readerUsageContext?: string;
 }
 
+interface AuditDimension {
+  score: number;
+  feedback: string;
+}
+
+interface WhatIfVariation {
+  label: string;
+  why: string;
+  action: string;
+}
+
+interface AuditResult {
+  overall_score: number;
+  grade: string;
+  estimated_success_rate: string;
+  dimensions: Record<string, AuditDimension>;
+  strengths: string[];
+  suggestions: string[];
+  what_if_variations?: WhatIfVariation[];
+  token_count?: number;
+  estimated_cost?: string;
+  model_check_warning?: string;
+}
+
 interface ResultLocationState {
   promptData?: WizardInputs;
   expertPrompt?: string;
   explanation?: string;
+  quality_score?: AuditResult;
   fromHistory?: boolean;
 }
 
@@ -49,17 +74,20 @@ const Result = () => {
 
   const [expertPrompt, setExpertPrompt] = useState(initialPrompt || "");
   const [explanation, setExplanation] = useState(initialExplanation || "");
+  const [qualityScore, setQualityScore] = useState<AuditResult | null>(null);
   const [loading, setLoading] = useState(!initialPrompt);
   const [error, setError] = useState("");
   const [isSaved, setIsSaved] = useState(!!fromHistory);
   const [expandedBlocks, setExpandedBlocks] = useState<Record<string, boolean>>({});
+  const [feedback, setFeedback] = useState<Record<string, 'up' | 'down'>>({});
+  const [isRefining, setIsRefining] = useState(false);
 
   const toggleBlock = (blockKey: string) => {
     setExpandedBlocks(prev => ({ ...prev, [blockKey]: !prev[blockKey] }));
   };
 
   // Parse the generated prompt into its 6 named blocks
-  const BLOCK_KEYS = ["IDENTITY", "CONTEXT", "TASK", "FORMAT", "EXEMPLAR", "CONSTRAINT"] as const;
+  const BLOCK_KEYS = ["IDENTITY", "CONTEXT", "TASK", "OUTPUT_STRUCTURE", "EXEMPLAR", "CONSTRAINT"] as const;
   type BlockKey = typeof BLOCK_KEYS[number];
 
   const parsePromptBlocks = (text: string): Record<BlockKey, string> | null => {
@@ -67,12 +95,12 @@ const Result = () => {
     let found = 0;
     for (let i = 0; i < BLOCK_KEYS.length; i++) {
       const key = BLOCK_KEYS[i];
-      const header = `### [${key}]`;
+      const header = key === "OUTPUT_STRUCTURE" ? "### [OUTPUT STRUCTURE]" : `### [${key}]`;
       const start = text.indexOf(header);
       if (start === -1) continue;
       const contentStart = start + header.length;
       // Find where next block starts, or end of string
-      const nextHeaders = BLOCK_KEYS.slice(i + 1).map(k => `### [${k}]`);
+      const nextHeaders = BLOCK_KEYS.slice(i + 1).map(k => k === "OUTPUT_STRUCTURE" ? "### [OUTPUT STRUCTURE]" : `### [${k}]`);
       let end = text.length;
       for (const nh of nextHeaders) {
         const pos = text.indexOf(nh, contentStart);
@@ -93,6 +121,8 @@ const Result = () => {
     technique: string;
     techniqueDesc: string;
     why: string;
+    before: string;
+    after: string;
     without: string;
     modify: string;
   }> = {
@@ -103,8 +133,10 @@ const Result = () => {
       accentText: "text-violet-600 dark:text-violet-400",
       accentBg: "bg-violet-50 dark:bg-violet-950/40",
       technique: t('result.teaching.blocks.IDENTITY.technique'),
-      techniqueDesc: t('result.teaching.blocks.IDENTITY.techniqueDesc'),
-      why: t('result.teaching.blocks.IDENTITY.why'),
+      techniqueDesc: t('result.teaching.blocks.IDENTITY.techniqueDesc', { role: safePromptData.role || "AI Assistant" }),
+      why: t('result.teaching.blocks.IDENTITY.why', { role: safePromptData.role || "AI Assistant" }),
+      before: t('result.teaching.blocks.IDENTITY.before'),
+      after: t('result.teaching.blocks.IDENTITY.after', { role: safePromptData.role || "AI Assistant", tone: safePromptData.tone || "Professional", task: safePromptData.task || "this task" }),
       without: t('result.teaching.blocks.IDENTITY.without'),
       modify: t('result.teaching.blocks.IDENTITY.modify'),
     },
@@ -117,6 +149,8 @@ const Result = () => {
       technique: t('result.teaching.blocks.CONTEXT.technique'),
       techniqueDesc: t('result.teaching.blocks.CONTEXT.techniqueDesc'),
       why: t('result.teaching.blocks.CONTEXT.why'),
+      before: t('result.teaching.blocks.CONTEXT.before'),
+      after: t('result.teaching.blocks.CONTEXT.after', { context: safePromptData.context || "none provided", audience: safePromptData.context || "general public", usage: safePromptData.readerUsageContext || "direct use" }),
       without: t('result.teaching.blocks.CONTEXT.without'),
       modify: t('result.teaching.blocks.CONTEXT.modify'),
     },
@@ -129,6 +163,8 @@ const Result = () => {
       technique: t('result.teaching.blocks.TASK.technique'),
       techniqueDesc: t('result.teaching.blocks.TASK.techniqueDesc'),
       why: t('result.teaching.blocks.TASK.why'),
+      before: t('result.teaching.blocks.TASK.before', { task: safePromptData.task || "write this" }),
+      after: t('result.teaching.blocks.TASK.after', { task: safePromptData.task || "write this" }),
       without: t('result.teaching.blocks.TASK.without'),
       modify: t('result.teaching.blocks.TASK.modify'),
     },
@@ -141,6 +177,8 @@ const Result = () => {
       technique: t('result.teaching.blocks.FORMAT.technique'),
       techniqueDesc: t('result.teaching.blocks.FORMAT.techniqueDesc'),
       why: t('result.teaching.blocks.FORMAT.why'),
+      before: t('result.teaching.blocks.FORMAT.before'),
+      after: t('result.teaching.blocks.FORMAT.after'),
       without: t('result.teaching.blocks.FORMAT.without'),
       modify: t('result.teaching.blocks.FORMAT.modify'),
     },
@@ -153,6 +191,8 @@ const Result = () => {
       technique: t('result.teaching.blocks.EXEMPLAR.technique'),
       techniqueDesc: t('result.teaching.blocks.EXEMPLAR.techniqueDesc'),
       why: t('result.teaching.blocks.EXEMPLAR.why'),
+      before: t('result.teaching.blocks.EXEMPLAR.before'),
+      after: t('result.teaching.blocks.EXEMPLAR.after'),
       without: t('result.teaching.blocks.EXEMPLAR.without'),
       modify: t('result.teaching.blocks.EXEMPLAR.modify'),
     },
@@ -165,6 +205,8 @@ const Result = () => {
       technique: t('result.teaching.blocks.CONSTRAINT.technique'),
       techniqueDesc: t('result.teaching.blocks.CONSTRAINT.techniqueDesc'),
       why: t('result.teaching.blocks.CONSTRAINT.why'),
+      before: t('result.teaching.blocks.CONSTRAINT.before'),
+      after: t('result.teaching.blocks.CONSTRAINT.after'),
       without: t('result.teaching.blocks.CONSTRAINT.without'),
       modify: t('result.teaching.blocks.CONSTRAINT.modify'),
     },
@@ -262,6 +304,7 @@ const Result = () => {
       const data = await response.json();
       setExpertPrompt(data.expert_prompt);
       setExplanation(data.explanation);
+      setQualityScore(data.quality_score);
 
       // Remove direct save here to avoid race conditions. 
       // The new useEffect below handles saving once user + prompt are both ready.
@@ -310,6 +353,45 @@ const Result = () => {
       });
       setTimeout(() => setCopied(false), 2000);
     }
+  };
+
+  const handleRefineVariation = async (variation: WhatIfVariation) => {
+    setIsRefining(true);
+    toast.info(`Applying Strategy: ${variation.label}`, {
+      description: "Recalibrating the architecture..."
+    });
+    
+    try {
+      const response = await fetch(`${apiUrl}/api/v1/refine`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          original_prompt: expertPrompt,
+          framework_suggestion: variation.action,
+          target_model: safePromptData.aiModel || "ChatGPT",
+          task_category: "general"
+        }),
+      });
+
+      if (!response.ok) throw new Error("Refinement failed");
+      
+      const data = await response.json();
+      setExpertPrompt(data.expert_prompt);
+      setExplanation(data.explanation);
+      setQualityScore(data.quality_score);
+      toast.success("Refined successfully!");
+    } catch (err) {
+      toast.error("Failed to refine prompt.");
+    } finally {
+      setIsRefining(false);
+    }
+  };
+
+  const handleFeedback = (blockKey: string, type: 'up' | 'down') => {
+    setFeedback(prev => ({ ...prev, [blockKey]: type }));
+    toast.success(type === 'up' ? "Awesome! We'll use this signal." : "Got it. We'll adjust the constraints.", {
+      icon: type === 'up' ? <ThumbsUp className="w-4 h-4" /> : <ThumbsDown className="w-4 h-4" />
+    });
   };
 
   const handleRefine = () => {
@@ -503,12 +585,29 @@ const Result = () => {
                                   <p className="text-sm text-muted-foreground leading-relaxed">{meta.techniqueDesc}</p>
                                 </div>
                                 {/* Why it works */}
-                                <div className="px-5 py-3 space-y-1.5 border-t border-border/20">
+                                <div className="px-5 py-4 space-y-2 border-t border-border/20">
                                   <p className="text-[10px] font-bold tracking-widest uppercase text-muted-foreground">{t('result.teaching.labels.why')}</p>
                                   <p className="text-sm text-muted-foreground leading-relaxed">{meta.why}</p>
                                 </div>
+                                {/* Before vs After comparison */}
+                                <div className="px-5 py-4 space-y-4 border-t border-border/20 bg-muted/20">
+                                  <div className="grid sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                      <p className="text-[9px] font-bold tracking-widest uppercase text-muted-foreground/70">Before (Generic)</p>
+                                      <div className="bg-background/80 border border-border/50 rounded-lg p-3 text-[11px] font-mono text-muted-foreground italic line-through decoration-destructive/30">
+                                        {meta.before}
+                                      </div>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                      <p className={`text-[9px] font-bold tracking-widest uppercase ${meta.accentText}`}>After (Optimized)</p>
+                                      <div className={`bg-background border ${meta.accent} border-opacity-30 rounded-lg p-3 text-[11px] font-mono ${meta.accentText} whitespace-pre-wrap`}>
+                                        {meta.after}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                                 {/* Without this */}
-                                <div className="px-5 py-3 space-y-1.5 border-t border-border/20 bg-destructive/5">
+                                <div className="px-5 py-4 space-y-2 border-t border-border/20 bg-destructive/5">
                                   <p className="text-[10px] font-bold tracking-widest uppercase text-destructive/60">{t('result.teaching.labels.without')}</p>
                                   <p className="text-sm text-muted-foreground leading-relaxed">{meta.without}</p>
                                 </div>
@@ -519,6 +618,29 @@ const Result = () => {
                                 </div>
                               </div>
                             )}
+
+                            {/* Block feedback */}
+                            <div className="flex items-center gap-4 py-2 border-t border-border/10 bg-background/20 px-5">
+                              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Was this block helpful?</span>
+                              <div className="flex items-center gap-1">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className={`h-7 w-7 ${feedback[key] === 'up' ? 'text-emerald-500 bg-emerald-500/10' : 'text-muted-foreground/50 hover:text-emerald-500'}`}
+                                  onClick={(e) => { e.stopPropagation(); handleFeedback(key, 'up'); }}
+                                >
+                                  <ThumbsUp className="h-3.5 w-3.5" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className={`h-7 w-7 ${feedback[key] === 'down' ? 'text-rose-500 bg-rose-500/10' : 'text-muted-foreground/50 hover:text-rose-500'}`}
+                                  onClick={(e) => { e.stopPropagation(); handleFeedback(key, 'down'); }}
+                                >
+                                  <ThumbsDown className="h-3.5 w-3.5" />
+                                </Button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       );
@@ -526,6 +648,46 @@ const Result = () => {
                   </div>
                 );
               })()}
+
+              {/* Strategy: What If Section */}
+              {qualityScore?.what_if_variations && qualityScore.what_if_variations.length > 0 && (
+                <div className="mt-12 space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+                  <div className="flex items-center gap-3">
+                    <div className="h-px flex-1 bg-gradient-to-r from-transparent to-border"></div>
+                    <div className="flex items-center gap-2 text-muted-foreground px-4">
+                      <RefreshCw className="w-4 h-4" />
+                      <span className="text-xs font-bold uppercase tracking-widest">Strategy: What if we shifted the approach?</span>
+                    </div>
+                    <div className="h-px flex-1 bg-gradient-to-l from-transparent to-border"></div>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-4">
+                    {qualityScore.what_if_variations.map((v, idx) => (
+                      <button
+                        key={idx}
+                        disabled={isRefining}
+                        onClick={() => handleRefineVariation(v)}
+                        className="group relative flex flex-col items-start text-left p-5 rounded-2xl border border-border bg-card/50 hover:bg-card hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 disabled:opacity-50"
+                      >
+                        <div className="mb-3 p-2 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                          {idx === 0 ? <Target className="w-4 h-4" /> : idx === 1 ? <ShieldCheck className="w-4 h-4" /> : <User className="w-4 h-4" />}
+                        </div>
+                        <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-1">
+                          {v.label}
+                        </h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {v.why}
+                        </p>
+                        {isRefining && (
+                          <div className="absolute inset-0 bg-background/50 rounded-2xl flex items-center justify-center">
+                            <RefreshCw className="w-5 h-5 animate-spin text-primary" />
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Secondary Actions */}
               <div className="flex flex-wrap gap-3 justify-center">

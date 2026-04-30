@@ -10,14 +10,24 @@ class AuditDimension(BaseModel):
     score: int = Field(..., ge=0, le=100)
     feedback: str
 
+class WhatIfVariation(BaseModel):
+    """Schema for 'What if' iteration suggestions."""
+    label: str  # e.g., "What if we added an exemplar?"
+    why: str    # e.g., "Anchors ambiguities and matches your specific style."
+    action: str # The internal command to apply it
+
 class AuditResult(BaseModel):
-    """Detailed structure for the objective quality audit. ADDED fields for technical cost/efficiency."""
+    """Detailed structure for the objective quality audit. ADDED fields for iteration loop."""
     overall_score: int = Field(..., ge=0, le=100)
     grade: str
     estimated_success_rate: str
     dimensions: Dict[str, AuditDimension]
     strengths: List[str]
     suggestions: List[str]
+    
+    # --- LAYER 5: ITERATION LOOP ---
+    what_if_variations: List[WhatIfVariation] = Field(default_factory=list)
+    # --------------------------------
     
     # --- NEW FIELDS FOR ADVANCED AUDIT (From Gemini/Perplexity Reports) ---
     token_count: Optional[int] = Field(None, description="Total tokens used by the final generated prompt.")

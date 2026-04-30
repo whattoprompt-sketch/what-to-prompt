@@ -1,7 +1,7 @@
 # backend/core/alchemy_engine.py
 
 from typing import List, Dict, Optional, Tuple, Any, Union 
-from models.chat_models import ChatMessage, AuditResult
+from models.chat_models import ChatMessage, AuditResult, WhatIfVariation
 from services.llm_service import call_ai_with_fallback
 from core.prompt_quality_scorer import PromptQualityScorer
 from core.vocabulary_mapper import VocabularyMapper
@@ -503,29 +503,46 @@ def smart_model_selection(requested_model: str, is_generation_task: bool) -> str
 # LAYER 5: OPTIMIZATION FRAMEWORK SUGGESTION (RETAINED)
 # ==========================================
 
-def get_optimization_suggestion(task_category: str) -> Dict[str, str]:
-    """Provides advanced optimization framework suggestions and a user-facing action."""
-    # Logic based on WHEN TO USE from ChatGPT's report
-    if task_category in ["code_generation", "formal_email", "blog"]: # Added blog to CoT as it's an informational/structured task
-        return {
-            "suggestion": "The **Chain-of-Thought (CoT)** method is highly recommended to improve reliability and logical structure. **Key Phrase to Inject:** 'Let’s think step by step.'",
-            "action": "Refine using CoT (Step-by-Step) Reasoning"
-        }
-    elif task_category == "marketing_campaign": # Creative problem-solving, strategic lookahead
-        return {
-            "suggestion": "The **Tree-of-Thought (ToT)** method is excellent for strategic problem-solving. **Key Phrase to Inject:** 'Imagine three different experts are answering this question...'",
-            "action": "Refine using ToT (Strategic Planning)"
-        }
-    elif task_category in ["creative_writing", "image_generation"]: # Needs verification/consistency
-        return {
-            "suggestion": "Use **Self-Consistency** to enhance coherence across creative outputs. **Key Phrase to Inject:** 'Generate several independent answers and give the most common result.'",
-            "action": "Refine using Self-Consistency Check"
-        }
-    else: # General tasks needing precise format
-        return {
-            "suggestion": "Consider using the **Few-Shot Learning** technique to define the desired output pattern. **Key Phrase to Inject:** 'Include explicit examples: Input: X; Output: Y...'",
-            "action": "Refine with Few-Shot Examples"
-        }
+def get_optimization_suggestion(task_category: str) -> List[WhatIfVariation]:
+    """Provides 3 specific 'What if' variations for iteration."""
+    
+    variations = []
+    
+    # 1. Framework Variation (Dynamic based on category)
+    if task_category in ["code_generation", "formal_email", "blog"]:
+        variations.append(WhatIfVariation(
+            label="What if we used Step-by-Step reasoning?",
+            why="Chain-of-Thought (CoT) activates the model's reasoning tokens, improving logic in complex multi-step tasks.",
+            action="Inject Chain-of-Thought reasoning (Step-by-Step) into the [TASK] block."
+        ))
+    elif task_category == "marketing_campaign":
+        variations.append(WhatIfVariation(
+            label="What if we used Strategic Lookahead?",
+            why="Tree-of-Thought (ToT) forces the model to simulate multiple strategic outcomes before committing to a final path.",
+            action="Inject Tree-of-Thought (Strategic Simulation) into the [TASK] block."
+        ))
+    else:
+        variations.append(WhatIfVariation(
+            label="What if we added a specific Exemplar?",
+            why="Few-Shot prompting anchors stylistic ambiguities to a concrete standard, reducing output drift.",
+            action="Inject a high-fidelity few-shot [EXEMPLAR] into the architecture."
+        ))
+
+    # 2. Constraint Variation (Always useful)
+    variations.append(WhatIfVariation(
+        label="What if we hardened the constraints?",
+        why="Non-negotiable negative constraints (Negative Space) prevent common hallucinations and corporate boilerplate.",
+        action="Harden [CONSTRAINT] block with non-negotiable negative constraints and measurable word counts."
+    ))
+
+    # 3. Role/Context Variation (Niche focus)
+    variations.append(WhatIfVariation(
+        label="What if we made the role more niche?",
+        why="Role specificity triggers more relevant training data distributions than generic job titles.",
+        action="Recalibrate [IDENTITY] with hyper-specific expertise markers and operational context."
+    ))
+
+    return variations
 
 
 # ==========================================
@@ -534,14 +551,14 @@ def get_optimization_suggestion(task_category: str) -> Dict[str, str]:
 
 async def audit_generated_prompt(expert_prompt: str, target_model: str, task_category: str) -> Optional[AuditResult]:
     """
-    Uses a fast model to objectively score the final generated prompt against criteria.
-    (Simulated implementation for safety)
+    Uses heuristics to objectively score the final generated prompt against criteria.
     """
-    
     try:
-        # Layer 5 integration: Get the advanced suggestion
-        adv_suggestion_data = get_optimization_suggestion(task_category)
-        advanced_suggestion = adv_suggestion_data["suggestion"]
+        # Use the real heuristic scorer
+        audit_result = PromptQualityScorer.score_prompt(expert_prompt)
+        
+        # Layer 5 integration: Get 3 specific iteration variations
+        what_if_variations = get_optimization_suggestion(task_category)
         
         # --- NEW TECHNICAL CALCULATIONS (Layer 2) ---
         token_count = get_token_count(expert_prompt)
@@ -571,91 +588,23 @@ async def audit_generated_prompt(expert_prompt: str, target_model: str, task_cat
                  if token_count > 1000 and "free" in target_model.lower():
                      model_check_warning = (model_check_warning or "") + " ⚠️ RISK: Requesting structured output (JSON/XML) with high token count on a smaller/free model increases the risk of mid-output truncation. Review your Max Tokens setting."
         
-        # --- Dynamic Feedback Configuration (RETAINED) ---
-        if task_category in ["creative_writing", "image_generation"]:
-            tech_specificity_feedback = "Focuses on narrative structure, tone, and visual/character depth, essential for creative work."
-            tech_specificity_term = "Visual/Narrative Specificity"
-            tech_specificity_score = random.randint(92, 100)
-            suggestions = [advanced_suggestion, "Ensure the setting details are rich with sensory language or light/color description."]
+        # Merge real audit results with Layer 5 context
+        audit_result.what_if_variations = what_if_variations
+        # Use the first variation as the default suggestion string for backward compatibility
+        audit_result.suggestions = [v.label for v in what_if_variations] + audit_result.suggestions
+        audit_result.token_count = token_count
+        audit_result.estimated_cost = estimated_cost
+        audit_result.model_check_warning = model_check_warning.strip() if model_check_warning else None
         
-        elif task_category == "marketing_campaign":
-            tech_specificity_feedback = "Uses marketing terminology (KPIs, audience segmentation) effectively and targets platform constraints."
-            tech_specificity_term = "Marketing Specificity"
-            tech_specificity_score = random.randint(89, 97)
-            suggestions = [advanced_suggestion, "Ensure the call-to-action is highly visible and specific."]
-        
-        elif task_category == "code_generation":
-            tech_specificity_feedback = "Uses advanced programming terminology and language-specific best practices effectively."
-            tech_specificity_term = "Technical Specificity"
-            tech_specificity_score = random.randint(85, 95)
-            suggestions = [advanced_suggestion, "Ensure the target programming language and framework are explicitly named."]
-        
-        elif task_category == "formal_email" or task_category == "blog": # Added blog here for technical focus
-            tech_specificity_feedback = "Uses professional communication terminology and maintains appropriate diplomatic tone throughout."
-            tech_specificity_term = "Professional Tone Specificity"
-            tech_specificity_score = random.randint(88, 96)
-            suggestions = [advanced_suggestion, "Ensure the recipient relationship and organizational context are clear."]
-        
-        else:  # general fallback
-            tech_specificity_feedback = "Uses clear, domain-appropriate language and maintains focus on the core objective."
-            tech_specificity_term = "Domain Specificity"
-            tech_specificity_score = random.randint(85, 93)
-            suggestions = [advanced_suggestion, "Ensure the target model and expected output format are explicitly defined."]
-        
-        if len(expert_prompt) < 100:
-            # SANITY CHECK: Prompt is too short to be "Expert"
-            simulated_audit_json = {
-                "overall_score": random.randint(30, 50),
-                "grade": "D",
-                "estimated_success_rate": "Low - Incomplete Output",
-                "dimensions": {
-                    "Completeness": {"score": 40, "feedback": "Output is too short."},
-                    tech_specificity_term: {"score": 30, "feedback": "Lacks sufficient detail."},
-                    "Clarity of Constraints": {"score": 50, "feedback": "Major sections missing."}
-                },
-                "strengths": ["None identified."],
-                "suggestions": ["Regenerate with more context.", "Check model availability."],
-                "token_count": token_count,
-                 "estimated_cost": estimated_cost,
-                 "model_check_warning": "⚠️ CRITICAL: Output appears truncated or failed."
-            }
-        else:
-            # Standard Success Path
-            simulated_audit_json = {
-                "overall_score": random.randint(88, 98),
-                "grade": random.choice(["A+", "A"]),
-                "estimated_success_rate": random.choice(["Extremely High (95%+)", "Very High (90%+)"]),
-            "dimensions": {
-                "Completeness": {
-                    "score": random.randint(90, 100),  
-                    "feedback": "All four sections (Role, Task, Context, Constraints) are present and detailed."
-                },
-                tech_specificity_term: {
-                    "score": tech_specificity_score,  
-                    "feedback": tech_specificity_feedback
-                },
-                "Clarity of Constraints": {
-                    "score": random.randint(85, 95),  
-                    "feedback": "Output formats and limitations are explicitly defined."
-                }
-            },
-            "strengths": [
-                "Excellent structure and clear role assignment (Axiom 1).",  
-                f"Successfully integrated specialized terminology for the {task_category.replace('_', ' ')} domain."
-            ],
-            "suggestions": suggestions,
-            # --- NEW FIELDS POPULATED ---
-            "token_count": token_count,
-            "estimated_cost": estimated_cost,
-            "model_check_warning": model_check_warning.strip() if model_check_warning else None
-        }
-        
-        audit_data = simulated_audit_json
-        return AuditResult.model_validate(audit_data)
+        # Add domain-specific context to strengths
+        if task_category != "general":
+            audit_result.strengths.append(f"Successfully integrated specialized terminology for the {task_category.replace('_', ' ')} domain.")
+
+        return audit_result
         
     except (Exception, ValidationError) as e:
         logger.error(f"Failed to perform audit or validate audit result: {e}")
-        return None 
+        return None
 
 
 # ==========================================
@@ -808,28 +757,28 @@ async def refine_prompt_with_framework(
     Returns (refined_prompt, explanation)
     """
     refine_system_prompt = f"""### INSTRUCTION BLOCK
-You are 'Prompt Refiner', an expert at enhancing existing prompts with advanced optimization frameworks.
+You are 'Prompt Refiner', an expert at enhancing existing prompts with advanced optimization strategies while maintaining structural integrity.
 
 ### YOUR MISSION
-The user has a working prompt, but wants to enhance it using a specific optimization framework.
+The user has a structured prompt using the 6-BLOCK ARCHITECTURE ([IDENTITY], [CONTEXT], [TASK], [FORMAT], [EXEMPLAR], [CONSTRAINT]). You must refine it based on a specific "What if" strategy.
 
-Original Prompt (provided below):
+Original Prompt:
 {original_prompt}
 
-### FRAMEWORK TO INJECT
+### REFINEMENT STRATEGY (APPLY THIS)
 {framework_suggestion}
 
-### YOUR TASK
-1. Keep the original structure (Role, Task, Context, Constraints)
-2. Inject the framework's key phrase naturally into the Task or Constraints section
-3. Add 1-2 sentences explaining HOW to apply the framework
-4. Do NOT change the core content or requirements
-5. Make the enhancement feel natural and integrated
+### MANDATORY PROTOCOLS
+1. MAINTAIN THE 6-BLOCK STRUCTURE. Do not delete headers.
+2. TARGETED INJECTION: Only modify the specific block targeted by the strategy (e.g., if the strategy is 'Harden [CONSTRAINT]', focus on that block).
+3. WHY IT WORKS: In your explanation, use prompt engineering terminology (Role Priming, Negative Space, Few-Shot, CoT).
+4. NO PLACEHOLDERS: If the strategy adds an exemplar, write a REAL, relevant example. No [INSERT DATA HERE].
+5. TOTAL REDESIGN: If the strategy is 'Role Niche', significantly deepen the [IDENTITY] block with expertise markers.
 
 ### OUTPUT FORMAT
 Output EXACTLY two sections:
 1. The refined prompt starting with "### Prompt"
-2. An explanation starting with "---EXPLANATION---" (2-3 sentences max)
+2. An explanation starting with "---EXPLANATION---" (Focus on the 'What changed' and 'Why')
 
 Start your response with "### Prompt" immediately.
 """
@@ -1123,15 +1072,14 @@ YOUR OUTPUT MUST USE THIS EXACT 6-BLOCK STRUCTURE — any missing block is a FAI
   "This output will be used for: [downstream use case — from READER_USAGE_CONTEXT if provided, else infer]"
 
 ### [TASK]
-Required structure:
+First, execute this reasoning logic:
   "Your primary objective: [precise task from MISSION_CRITICAL_TASK]"
-  "Step 1: [what to analyze/identify — explicit reasoning instruction]"
-  "Step 2: [what to structure/draft — builds on Step 1]"
-  "Step 3: [what to synthesize/finalize — completes the objective]"
+  "Step 1: [analysis/reasoning step - first principles]"
+  "Step 2: [drafting/structuring step - builds on Step 1]"
+  "Step 3: [synthesis/finalization step - completes the objective]"
 
-### [FORMAT]
-Required structure:
-  "Structure your response exactly as follows:"
+### [OUTPUT STRUCTURE]
+Structure your response exactly as follows:
   "[Section name]: [contents, max length]" (repeat for each section)
   "Do not include: [excluded elements]"
   Apply OUTPUT_FORMAT_DIRECTIVE to determine section names and lengths.
