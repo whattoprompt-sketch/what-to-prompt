@@ -993,11 +993,11 @@ Add a "CONSTRAINTS" section explaining: "CRITICAL OVERRIDE: Professional tone ma
              forbidden_words_list = [w.lower().strip() for w in forbidden_words_list if w and len(w.strip()) > 2]
              forbidden_display = ", ".join(f"'{w}'" for w in forbidden_words_list)
              
-             # Get domain exemplar — user-provided overrides category default
+             # Get domain exemplar — user-provided overrides category default (never concatenated)
              category_exemplar = get_domain_exemplar(task_category)
              active_exemplar = example_output if example_output else category_exemplar
              exemplar_block = (
-                 f"\n**FEW_SHOT_EXEMPLAR** — {'User-provided example. Match this style exactly, then extend it with 1-2 more lines.' if example_output else 'Category-level example showing target quality and format.'}\n{active_exemplar}"
+                 f"\n**FEW_SHOT_EXEMPLAR** — {'User-provided example. Match this style exactly, then extend it with 1-2 more lines in the same voice and format.' if example_output else 'Category-level example showing target quality and format.'}\n{active_exemplar}"
              ) if active_exemplar else ""
 
              # Build previous failures block — feeds directly into ### DO NOT
@@ -1009,13 +1009,34 @@ Add a "CONSTRAINTS" section explaining: "CRITICAL OVERRIDE: Professional tone ma
                  "Translate every PREVIOUS_FAILURES item into a direct prohibition. "
              ) if failed_attempts else ""
 
+             # Detect copy-paste / direct-use intent at Python level — inject as hard constraint
+             reader_usage_lower = reader_usage_context.lower() if reader_usage_context else ""
+             is_copy_paste = any(kw in reader_usage_lower for kw in [
+                 "paste", "copy-paste", "copy paste", "no edit", "no editing",
+                 "directly", "direct use", "immediate", "ready to use", "ready-to-use"
+             ])
+             if is_copy_paste:
+                 # Inject directly into constraints — same weight as any user-supplied constraint
+                 components["constraints"] += (
+                     "\nCRITICAL ZERO-PLACEHOLDER RULE: The generated prompt must instruct the AI "
+                     "to write complete, ready-to-use content with NO bracketed placeholders anywhere. "
+                     "Forbidden: [INSERT X], [YOUR Y HERE], [ADD Z], [COMPANY NAME], or any similar token. "
+                     "Every sentence must be fully written out."
+                 )
+
              # Build reader + usage context block
              reader_usage_block = (
                  f"\n**READER_USAGE_CONTEXT**: {reader_usage_context}\n"
-                 f"Calibrate the generated prompt's tone, completeness, and formality to match this context. "
-                 f"If copy-paste or direct use is implied: instruct the AI to produce zero placeholders. "
-                 f"If a specific reader type is mentioned: match their structural and register expectations."
+                 + (
+                     "CRITICAL — Copy-paste use detected: The prompt you generate MUST include an explicit instruction "
+                     "to the target AI saying 'Do not use any bracketed placeholders. Write every section completely.' "
+                     if is_copy_paste else
+                     "Calibrate the generated prompt's tone, completeness, and formality to match the specified reader. "
+                     "If a specific reader type is mentioned (CEO, developer, client), add an explicit instruction "
+                     "about format and register that matches their expectations."
+                 )
              ) if reader_usage_context else ""
+
              
              user_content = f"""
 ### PRODUCTION_PARAMETERS
