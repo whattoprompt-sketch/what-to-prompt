@@ -32,7 +32,7 @@ class PromptQualityScorer:
         # 1. BLOCK PRESENCE (6 Blocks)
         required_blocks = [
             "### [IDENTITY]", "### [CONTEXT]", "### [TASK]", 
-            "### [FORMAT]", "### [EXEMPLAR]", "### [CONSTRAINT]"
+            "### [OUTPUT STRUCTURE]", "### [EXEMPLAR]", "### [CONSTRAINT]"
         ]
         found_blocks = [b for b in required_blocks if b in prompt]
         block_score = int((len(found_blocks) / 6) * 100)
@@ -58,7 +58,7 @@ class PromptQualityScorer:
         task_score = 100 if has_steps else 50
 
         # 5. FORMAT DEFINITION (Explicitness)
-        format_match = re.search(r"### \[FORMAT\](.*?)(###|$)", prompt, re.S)
+        format_match = re.search(r"### \[OUTPUT STRUCTURE\](.*?)(###|$)", prompt, re.S)
         format_text = format_match.group(1) if format_match else ""
         is_explicit = bool(re.search(r"\[.*?\]|max|exactly|as follows", format_text, re.I))
         format_score = 100 if is_explicit else 30

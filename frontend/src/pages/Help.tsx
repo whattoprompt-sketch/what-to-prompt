@@ -61,10 +61,8 @@ const Help = () => {
                   <p className="text-sm text-muted-foreground">
                     Start by clearly stating what you want to achieve. Be as specific as possible about your objective. The more detail you provide, the better the AI can understand and fulfill your needs.
                   </p>
-                  <div className="bg-muted/50 rounded-lg p-4 border-2 border-dashed">
-                    <p className="text-xs text-muted-foreground text-center">
-                      [Screenshot placeholder: Goal definition step]
-                    </p>
+                  <div className="rounded-lg overflow-hidden border border-border shadow-2xl">
+                    <img src="/screenshots/step1.png" alt="Step 1: Goal Definition" className="w-full h-auto" />
                   </div>
                 </div>
 
@@ -74,10 +72,8 @@ const Help = () => {
                   <p className="text-sm text-muted-foreground">
                     Give the AI important background information. This helps it understand your situation, audience, and any relevant constraints. Context is key to getting responses that truly fit your needs.
                   </p>
-                  <div className="bg-muted/50 rounded-lg p-4 border-2 border-dashed">
-                    <p className="text-xs text-muted-foreground text-center">
-                      [Screenshot placeholder: Context input step]
-                    </p>
+                  <div className="rounded-lg overflow-hidden border border-border shadow-2xl">
+                    <img src="/screenshots/step2.png" alt="Step 2: Context Input" className="w-full h-auto" />
                   </div>
                 </div>
 
@@ -87,10 +83,8 @@ const Help = () => {
                   <p className="text-sm text-muted-foreground">
                     Choose which AI platform you'll be using. Different AIs have different strengths, and we'll optimize your prompt accordingly for maximum compatibility and effectiveness.
                   </p>
-                  <div className="bg-muted/50 rounded-lg p-4 border-2 border-dashed">
-                    <p className="text-xs text-muted-foreground text-center">
-                      [Screenshot placeholder: AI selection step]
-                    </p>
+                  <div className="rounded-lg overflow-hidden border border-border shadow-2xl">
+                    <img src="/screenshots/step3.png" alt="Step 3: AI Selection" className="w-full h-auto" />
                   </div>
                 </div>
 
@@ -100,10 +94,8 @@ const Help = () => {
                   <p className="text-sm text-muted-foreground">
                     Define how the AI should communicate. Whether professional, casual, technical, or creative - the tone shapes the entire response to match your audience and purpose.
                   </p>
-                  <div className="bg-muted/50 rounded-lg p-4 border-2 border-dashed">
-                    <p className="text-xs text-muted-foreground text-center">
-                      [Screenshot placeholder: Tone selection step]
-                    </p>
+                  <div className="rounded-lg overflow-hidden border border-border shadow-2xl">
+                    <img src="/screenshots/step4.png" alt="Step 4: Tone Selection" className="w-full h-auto" />
                   </div>
                 </div>
 
@@ -113,10 +105,8 @@ const Help = () => {
                   <p className="text-sm text-muted-foreground">
                     Specify any formatting requirements, content limits, or other constraints. This ensures the output meets your exact specifications and can be used immediately without modifications.
                   </p>
-                  <div className="bg-muted/50 rounded-lg p-4 border-2 border-dashed">
-                    <p className="text-xs text-muted-foreground text-center">
-                      [Screenshot placeholder: Requirements step]
-                    </p>
+                  <div className="rounded-lg overflow-hidden border border-border shadow-2xl">
+                    <img src="/screenshots/step5.png" alt="Step 5: Requirements" className="w-full h-auto" />
                   </div>
                 </div>
 
@@ -126,10 +116,8 @@ const Help = () => {
                   <p className="text-sm text-muted-foreground">
                     Tell the AI what role or expertise it should embody. This helps frame its perspective and approach, leading to responses that match the level of expertise and viewpoint you need.
                   </p>
-                  <div className="bg-muted/50 rounded-lg p-4 border-2 border-dashed">
-                    <p className="text-xs text-muted-foreground text-center">
-                      [Screenshot placeholder: Role definition step]
-                    </p>
+                  <div className="rounded-lg overflow-hidden border border-border shadow-2xl">
+                    <img src="/screenshots/step6.png" alt="Step 6: Role Definition" className="w-full h-auto" />
                   </div>
                 </div>
 
@@ -139,10 +127,8 @@ const Help = () => {
                   <p className="text-sm text-muted-foreground">
                     Once generated, copy your optimized prompt and paste it into your chosen AI tool. You can refine it further or use it as-is for immediate, high-quality results.
                   </p>
-                  <div className="bg-muted/50 rounded-lg p-4 border-2 border-dashed">
-                    <p className="text-xs text-muted-foreground text-center">
-                      [Screenshot placeholder: Final result page with copy button]
-                    </p>
+                  <div className="rounded-lg overflow-hidden border border-border shadow-2xl">
+                    <img src="/screenshots/result.png" alt="Final Result Page" className="w-full h-auto" />
                   </div>
                 </div>
               </div>

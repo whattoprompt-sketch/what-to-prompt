@@ -769,11 +769,10 @@ Original Prompt:
 {framework_suggestion}
 
 ### MANDATORY PROTOCOLS
-1. MAINTAIN THE 6-BLOCK STRUCTURE. Do not delete headers.
-2. TARGETED INJECTION: Only modify the specific block targeted by the strategy (e.g., if the strategy is 'Harden [CONSTRAINT]', focus on that block).
+1. BLOCK LOCK: You are only allowed to modify the block explicitly targeted by the strategy (e.g., [TASK]). All other blocks ([IDENTITY], [CONTEXT], [EXEMPLAR], [CONSTRAINT], [OUTPUT STRUCTURE]) MUST remain byte-for-byte identical to the original prompt.
+2. HEADER INTEGRITY: Use the exact headers: `### [IDENTITY]`, `### [CONTEXT]`, `### [TASK]`, `### [OUTPUT STRUCTURE]`, `### [EXEMPLAR]`, `### [CONSTRAINT]`.
 3. WHY IT WORKS: In your explanation, use prompt engineering terminology (Role Priming, Negative Space, Few-Shot, CoT).
-4. NO PLACEHOLDERS: If the strategy adds an exemplar, write a REAL, relevant example. No [INSERT DATA HERE].
-5. TOTAL REDESIGN: If the strategy is 'Role Niche', significantly deepen the [IDENTITY] block with expertise markers.
+4. NO HALLUCINATED EXAMPLES: Only provide an exemplar if the strategy specifically asks to 'Inject an [EXEMPLAR]'. Otherwise, do not touch the existing exemplar.
 
 ### OUTPUT FORMAT
 Output EXACTLY two sections:
@@ -900,7 +899,7 @@ async def process_chat_request(
     Main entry point for processing chat requests, now including all advanced layers.
     Also handles explicit wizard input (passed as Dict).
     """
-    print(f"🔄 [AlchemyEngine] Processing new request for model: {model}")
+    print(f"[AlchemyEngine] Processing new request for model: {model}")
     
     # --- NEW: Handle Explicit Wizard Input Directly ---
     if isinstance(messages, dict):
@@ -1082,7 +1081,8 @@ First, execute this reasoning logic:
 Structure your response exactly as follows:
   "[Section name]: [contents, max length]" (repeat for each section)
   "Do not include: [excluded elements]"
-  Apply OUTPUT_FORMAT_DIRECTIVE to determine section names and lengths.
+  Apply OUTPUT_FORMAT_DIRECTIVE to define sections and constraints.
+  {f"CRITICAL: Add a section: 'Do not use any bracketed placeholders like [INSERT X]. Write every section completely.'" if is_copy_paste else ""}
 
 ### [EXEMPLAR]
 Required structure:
@@ -1094,6 +1094,7 @@ Required structure:
 Required structure:
   "Hard constraints (non-negotiable):"
   "- [measurable constraint with number/grade/word count]" (2-3 bullets)
+  {'- DO NOT use bracketed placeholders. Write every section completely.' if is_copy_paste else ''}
   "Soft constraints (strong preferences):"
   "- [domain-specific style preference]" (1-2 bullets, drawn from PREVIOUS_FAILURES if provided)
   {failures_do_not_note}THIS BLOCK IS MANDATORY.
@@ -1132,13 +1133,13 @@ START your response directly with "### Prompt"
             ChatMessage(role="user", content=user_content)
         ]
         
-        print(f"⚡ [AlchemyEngine] Sovereign Processing ({model})...")
+        print(f"[AlchemyEngine] Sovereign Processing ({model})...")
         raw_response, error = await call_ai_with_fallback(api_messages, primary_model=model)
         
         if error:
-            print(f"❌ [AlchemyEngine] AI Call Failed: {error}")
+            print(f"[AlchemyEngine] AI Call Failed: {error}")
         else:
-            print("✨ [AlchemyEngine] AI Call Successful!")
+            print("[AlchemyEngine] AI Call Successful!")
 
         if error == "rate_limit":
              return {
