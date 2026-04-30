@@ -27,6 +27,7 @@ interface PromptData {
   requirements: string;
   role: string;
   outputFormat: string;
+  failedAttempts: string;
 }
 
 const Wizard = () => {
@@ -41,9 +42,10 @@ const Wizard = () => {
     requirements: "",
     role: "",
     outputFormat: "",
+    failedAttempts: "",
   });
 
-  const totalSteps = 7;
+  const totalSteps = 8;
 
   // Calculate progress accounting for skipped tone step
   const calculateProgress = () => {
@@ -183,6 +185,22 @@ const Wizard = () => {
         examples: [],
       },
       learnMoreTrigger: t('wizard.step7.learnMoreTitle'),
+    },
+    {
+      id: 8,
+      icon: Lightbulb,
+      title: t('wizard.step8.title'),
+      subtitle: t('wizard.step8.subtitle'),
+      field: "failedAttempts",
+      placeholder: t('wizard.step8.placeholder'),
+      type: "textarea",
+      optional: true,
+      learnMore: {
+        title: t('wizard.step8.learnMoreTitle'),
+        description: t('wizard.step8.learnMoreDesc'),
+        examples: [],
+      },
+      learnMoreTrigger: t('wizard.step8.learnMoreTitle'),
     },
   ];
 

@@ -25,6 +25,7 @@ async def chat_endpoint(request: Request, chat_request: ChatRequest):
                 "constraints": chat_request.constraints,
                 "tone": chat_request.tone,
                 "output_format": chat_request.output_format,
+                "failed_attempts": chat_request.failed_attempts,
             }
         else:
             # Legacy Chat Request: Convert list of dicts to ChatMessage objects

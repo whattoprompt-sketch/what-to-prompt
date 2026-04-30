@@ -47,6 +47,7 @@ class ChatRequest(BaseModel):
     constraints: Optional[str] = None
     tone: Optional[str] = None
     output_format: Optional[str] = None
+    failed_attempts: Optional[str] = None
 
 class ChatResponse(BaseModel):
     """

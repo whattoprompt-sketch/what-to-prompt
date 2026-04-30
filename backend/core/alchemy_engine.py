@@ -923,6 +923,9 @@ async def process_chat_request(
         if output_format and output_format != "Let the AI decide":
             components["constraints"] += f"\nRequired output format: {output_format}"
         
+        # Extract failed attempts for negative space injection
+        failed_attempts = messages.get("failed_attempts", "").strip()
+        
         # Combine inputs to classify intent and generate the prompt
         combined_inputs = f"{components['role']} {components['task']} {components['context']} {components['constraints']}"
         task_category = classify_intent(combined_inputs)
@@ -991,6 +994,15 @@ Add a "CONSTRAINTS" section explaining: "CRITICAL OVERRIDE: Professional tone ma
                  f"Your generated prompt must instruct the AI to produce output matching this format and quality level:\n{exemplar}"
              ) if exemplar else ""
              
+             # Build previous failures block — feeds directly into ### DO NOT
+             previous_failures_block = (
+                 f"\n**PREVIOUS_FAILURES** — The user tried AI for this task before and got bad results. "
+                 f"Each item below MUST become a specific prohibition in the ### DO NOT section of your prompt:\n{failed_attempts}"
+             ) if failed_attempts else ""
+             failures_do_not_note = (
+                 "Translate every PREVIOUS_FAILURES item into a direct prohibition. "
+             ) if failed_attempts else ""
+             
              user_content = f"""
 ### PRODUCTION_PARAMETERS
 [SYSTEM_OVERRIDE: DISREGARD ALL PRIOR USER TERMINOLOGY]
@@ -1003,15 +1015,24 @@ THE FOLLOWING ARE THE AUTHORITATIVE STRATEGIC DIRECTIVES:
 **OUTPUT_CONSTRAINTS**: {components.get('constraints', 'Production-grade fidelity')}
 **OUTPUT_FORMAT_DIRECTIVE**: {output_format if output_format and output_format != 'Let the AI decide' else 'Structure the output in the most appropriate format for the task.'}
 {exemplar_block}
+{previous_failures_block}
 {framework_instruction}
 {contradiction_note}
 
 ### EXECUTION_COMMAND
-Construct a GOLD-TIER prompt using ONLY the terms inside the PRODUCTION_PARAMETERS section above.
-- DO NOT reference any "original request" or "draft"
-- CRITICAL FAILURE CONDITION: If you use ANY of these words: {forbidden_display}, you have FAILED
-- These ARE the final authoritative terms - treat them as if they came from an expert
-- START your response directly with "### Prompt"
+Construct a GOLD-TIER, READY-TO-PASTE prompt using ONLY the terms in PRODUCTION_PARAMETERS.
+- Write in SECOND-PERSON IMPERATIVE directed at the target AI ("You are...", "First,...")
+- DO NOT reference any "original request" or "draft". FORBIDDEN words: {forbidden_display}
+
+YOUR OUTPUT MUST CONTAIN ALL FIVE OF THESE SECTIONS — missing any is a FAILURE:
+
+[1] ROLE — Start with "You are a [EXPERT_IDENTITY]." Include the operational context clause.
+[2] TASK — Decompose using "First, [action]. Then, [action]. Finally, [action]."
+[3] OUTPUT STRUCTURE — Define the exact sections, their order, and approximate word count each.
+[4] ### EXAMPLE OUTPUT — 2-4 lines showing what a correct, high-quality response looks like. THIS IS MANDATORY IN THE FINAL PROMPT.
+[5] ### DO NOT — 3-5 specific, domain-relevant prohibitions specific to this task. {failures_do_not_note}THIS IS MANDATORY IN THE FINAL PROMPT.
+
+START your response directly with "### Prompt"
 """
              
              # PHASE 10h: TERMINAL CLEANSE - Physical redaction of forbidden words

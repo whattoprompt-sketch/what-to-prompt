@@ -135,6 +135,13 @@
       "learnMoreTitle": "Which format should I choose?",
       "learnMoreDesc": "Output format tells the AI how to structure its response. Bullet lists are great for quick scanning, numbered steps for processes, narrative for storytelling, and tables for comparisons. When in doubt, let the AI decide."
     },
+    "step8": {
+      "title": "What's failed before? (Optional)",
+      "subtitle": "If you've tried AI for this and got bad results, tell us what went wrong. We'll turn it into hard prohibitions.",
+      "placeholder": "e.g., It used too much corporate jargon. The output was too generic. It listed features instead of benefits.",
+      "learnMoreTitle": "Why does this help?",
+      "learnMoreDesc": "Telling the AI what NOT to do is often more powerful than describing what you want. Your failed attempts become explicit prohibitions in the generated prompt, directly preventing those mistakes from happening again."
+    },
     "buttons": {
       "back": "Back",
       "continue": "Continue",

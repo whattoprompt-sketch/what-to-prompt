@@ -17,6 +17,7 @@ interface WizardInputs {
   tone?: string;
   aiModel?: string;
   outputFormat?: string;
+  failedAttempts?: string;
 }
 
 interface ResultLocationState {
@@ -126,6 +127,7 @@ const Result = () => {
           constraints: safePromptData.requirements,
           tone: safePromptData.tone,
           output_format: safePromptData.outputFormat,
+          failed_attempts: safePromptData.failedAttempts,
         }),
         signal: controller.signal
       });
